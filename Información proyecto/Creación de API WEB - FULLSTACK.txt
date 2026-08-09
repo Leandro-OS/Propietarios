@@ -1,0 +1,548 @@
+🗺️ El Mapa Completo de tu Aplicación Full Stack
+   Tu arquitectura final se vería estructurada de la siguiente manera:
+
+🎨 FRONTEND (La pantalla del usuario)
+   ⚙️ Motor    : Vite (Para compilar y ver tus cambios en milisegundos)
+   ⚙️ Framework: Vue.js (Estructura visual por componentes)
+   ⚙ Lenguaje : TypeScript (Para evitar errores en tus variables)
+   ⚙️ Diseño   : Tailwind CSS (Estilos rápidos mediante clases)
+
+🔌 COMUNICACIÓN (El puente)
+  ⚙️ Peticiones HTTP (fetch o la librería Axios) que viajan del navegador al servidor enviando y recibiendo datos en formato JSON.
+
+🧠 BACKEND (El cerebro)
+  ⚙️ Motor         : Node.js (El entorno de ejecución)
+  ⚙️ Framework     : Express (Para crear las rutas como /api/productos)
+  ⚙️ Base de datos : Prisma (Se encarga de hablar con tu base de datos SQL)
+  ⚙️ Almacenamiento: Tu motor SQL preferido (por ejemplo, PostgreSQL, MySQL, SQLite).
+  ⚙️ librería (ORM): Prisma
+  
+  REQUISITOS :
+     ⚙️ Instalar Node.js
+	 
+	 
++---------------------------------------------------------------------+
+|                                                                     |
+|  BACKEND                                                            | 
+|  Comandos para crear la estructura inicial de tu proyecto           |
+|  Express con Node.js, TypeScript y Prisma (SQLite) en tu ordenador  |
+|                                                                     |
++---------------------------------------------------------------------+
+
+
+🚀 Comandos para crear el proyecto de Backend
+   Abre una nueva ventana de la terminal (separada de la de Vue.js) y ejecuta los siguientes comandos:
+   
+   1. Crear la carpeta e inicializar Node.js
+      Crea un directorio para tu backend y genera el archivo package.json:
+	  
+	    bash
+	    mkdir mi-proyecto-backend
+        cd mi-proyecto-backend
+        npm init -y
+	  
+   2. Instalar Express y dependencias de producción
+	  Instala Express y el cliente de Prisma para realizar consultas:
+	   
+	    bash
+	    npm install express @prisma/client	  
+		
+   3. Instalar TypeScript y herramientas de desarrollo
+      Instala las herramientas necesarias para compilar tu código y los "tipos" de Express para que TypeScript los reconozca:
+	  
+	    bash
+		npm install -D typescript ts-node-dev @types/node @types/express prisma		
+		
+   4. Inicializar las configuraciones de TypeScript y Prisma
+      Genera los archivos base de configuración de ambos entornos:
+	    
+		bash
+		npx tsc --init
+        npx prisma init --datasource-provider sqlite
+		
+	  Al indicar --datasource-provider sqlite, Prisma se configurará automáticamente para crear y leer un archivo local de SQLite 
+	  sin que tengas que instalar software externo en tu ordenador	
+
+✍️ Configuraciones manuales obligatorias
+   Abre la carpeta mi-proyecto-backend con VS Code y modifica los siguientes tres archivos:
+   
+   Paso A: Configurar el script de arranque en package.json
+   Abre tu package.json y reemplaza la sección "scripts" por la siguiente para poder arrancar el servidor en modo desarrollo:
+   
+     json"scripts": {
+       "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+     },
+
+   Paso B: Crear tu primera tabla en el esquema de Prisma
+   Abre el archivo generado en prisma/schema.prisma. Verás que ya está configurado para SQLite. 
+   Añade al final un modelo de ejemplo (una tabla de usuarios):
+  
+     prisma
+	 datasource db {
+       provider = "sqlite"
+       url      = env("DATABASE_URL")
+     }
+
+     generator client {
+       provider = "prisma-client-js"
+     }
+
+     // Tu primera tabla de la base de datos SQL
+     model Usuario {
+       id    Int     @id @default(autoincrement())
+       email String  @unique
+       nombre String?
+     }
+
+   Para aplicar este modelo y que Prisma cree el archivo físico de tu base de datos SQLite, 
+   ejecuta en tu terminal:
+  
+     bash
+     npx prisma migrate dev --name init
+	
+   Paso C: Escribir el código del servidor Express
+   Crea una carpeta llamada src y dentro un archivo llamado index.ts (src/index.ts). 
+   Pega este código básico que levanta el servidor y se conecta a SQLite a través de Prisma:
+   
+     typescript
+	 import express from 'express';
+     import { PrismaClient } from '@prisma/client';
+
+     const app = express();
+     const prisma = new PrismaClient();
+     const PORT = 3000;
+
+     app.use(express.json());
+
+     // Ruta de ejemplo para obtener usuarios de SQLite
+     app.get('/api/usuarios', async (req, res) => {
+       const usuarios = await prisma.usuario.findMany();
+       res.json(usuarios);
+    });
+
+    // Ruta de ejemplo para crear un usuario en SQLite
+    app.post('/api/usuarios', async (req, res) => {
+      const { email, nombre } = req.body;
+      const nuevoUsuario = await prisma.usuario.create({
+        data: { email, nombre },
+      });
+      res.json(nuevoUsuario);
+    });
+
+    app.listen(PORT, () => {
+      console.log(`🧠 Servidor Express corriendo en http://localhost:${PORT}`);
+    });	
+
+
+🔥 Arrancar el servidor de desarrollo
+   Ya tienes todo listo. Ejecuta el siguiente comando en tu terminal para encender tu backend:
+   
+     bash
+	 npm run dev
+	 
+   Verás el mensaje en la consola indicando que el servidor está corriendo en el puerto 3000. 
+   Ahora tienes Vue en el puerto 5173 y Express en el puerto 3000.	 
+
+
++---------------------------------------------------------------------+
+|                                                                     |
+|  FRONTEND                                                           | 
+|  Comandos para crear la estructura inicial de tu proyecto           | 
+|  Vue.js con Vite y TypeScript en tu ordenador                       |
+|                                                                     |
++---------------------------------------------------------------------+
+
+Aquí tienes la guía paso a paso y los comandos exactos para crear la estructura inicial de tu proyecto frontend en tu ordenador.
+
+📋 Requisito previo
+   Antes de ejecutar los comandos, debes tener instalado Node.js en tu sistema. Puedes comprobar si lo tienes instalado abriendo 
+   tu terminal (CMD, PowerShell o Terminal de Mac/Linux) y escribiendo:
+   
+      bash
+	  node -v
+	  
+	  
+   Si te devuelve un número de versión (por ejemplo, v20.x.x), estás listo para continuar.
+
+   
+🚀 Comandos para crear el proyecto
+   Sigue estos cuatro pasos en tu terminal para levantar tu proyecto de Vue.js + Vite + TypeScript + Tailwind CSS:
+   1. Crear la base con Vite
+      Escribe el siguiente comando. Reemplaza mi-proyecto-vue por el nombre que quieras darle a tu carpeta:
+	  
+	     bash 
+		 npm create vite@latest mi-proyecto-vue -- --template vue-ts
+	  
+   2. Entrar a la carpeta e instalar dependencias
+      Accede al directorio que se acaba de crear e instala los paquetes iniciales de Vue y Vite:
+	  
+	     bash
+	     cd mi-proyecto-vue
+         npm install
+
+   3. Instalar y configurar Tailwind CSS
+      Ejecuta el siguiente comando para instalar Tailwind y sus herramientas necesarias como dependencias de desarrollo:
+	  
+	     bash
+		 npm install -D tailwindcss postcss autoprefixer
+		 
+      Acto seguido, inicializa el archivo de configuración de Tailwind ejecutando:
+	  
+	     bash
+		 npx tailwindcss init -p
+		 
+		 
+      Esto creará dos archivos en tu raíz: tailwind.config.js y postcss.config.js).
+
+	  
+✍️ Configuraciones finales obligatorias
+   Para que Tailwind funcione correctamente en tu entorno de Vue, debes modificar dos archivos usando tu editor de código (VS Code):
+   
+   Paso A: Configurar tailwind.config.js
+   Abre el archivo tailwind.config.js en la raíz de tu proyecto y asegúrate de añadir las rutas de tus archivos Vue en la sección content. 
+   Debe quedar exactamente así:
+   
+      javascript
+	  /** @type {import('tailwindcss').Config} */
+      export default {
+        content: [
+          "./index.html",
+          "./src/**/*.{vue,js,ts,jsx,tsx}",
+        ],
+        theme: {
+          extend: {},
+        },
+        plugins: [],
+      }
+	  
+   Paso B: Añadir las directivas de Tailwind al CSS
+   Busca el archivo de estilos principal dentro de la carpeta src. Por defecto, Vite crea un archivo llamado src/style.css. 
+   Abre ese archivo, borra todo su contenido inicial y pega estas tres líneas en la parte superior:
+   
+      css
+	  @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
+	  
+🔥 Arrancar el servidor de desarrollo
+  ¡Todo listo! Ya puedes encender tu motor de desarrollo ultra rápido ejecutando en tu terminal:
+  
+     bash
+	 npm run dev
+	 
+  La terminal te dará una dirección local (normalmente http://localhost:5173/). 
+  Abre ese enlace en tu navegador web y verás tu nueva aplicación de Vue 3 corriendo con TypeScript y Tailwind CSS lista para empezar a programar.
+  
+
++---------------------------------------------------------------------------------------------------------------+
+|                                                                                                               |
+| Comandos para empaquetar la aplicación completa (Vue.js con Vite y TypeScript / Node.js, TypeScript y Prisma) |
+| en contenedor docker, crear la imagen, ejecutar el servicio y detener el servicio de la imagen                |
+|                                                                                                               |
++---------------------------------------------------------------------------------------------------------------+
+
+Para empaquetar la aplicación completa en contenedores Docker, lo ideal es crear un archivo Dockerfile dentro de cada una de tus carpetas (frontend y backend).
+A continuación, tienes los comandos exactos y los archivos de configuración para construir, arrancar y detener ambas imágenes.
+
+🎨 Contenedor para el Frontend (Vue.js + Vite + TS)
+   Dado que Vite genera archivos estáticos (HTML, CSS, JS), la forma estándar y más eficiente de meterlo en Docker en producción es compilar el proyecto 
+   y servirlo con un servidor web ligero como Nginx.
+   
+   Crea un archivo llamado exactamente Dockerfile en la raíz de tu carpeta de Vue:
+   
+     dockerfile
+     # --- Fase 1: Compilación ---
+     FROM node:20-alpine AS build
+     WORKDIR /app
+     COPY package*.json ./
+     RUN npm install
+     COPY . .
+     RUN npm run build
+
+     # --- Fase 2: Servidor de producción ---
+     FROM nginx:alpine
+     # Copia los archivos compilados por Vite al directorio de Nginx
+     COPY --from=build /app/dist /usr/share/nginx/html
+     EXPOSE 80
+     CMD ["nginx", "-g", "daemon off;"]
+	 
+🎨 Comandos para el Frontend:
+   1. Crear la imagen:
+  
+        bash
+	    docker build -t mi-app-frontend .
+	
+   2. Ejecutar el servicio (en el puerto 8080 de tu PC):
+  
+        bash
+	    docker run -d -p 8080:80 --name contenedor-frontend mi-app-frontend	
+
+  3. Detener el servicio:
+    
+	   bash
+	   docker stop contenedor-frontend	
+	
+	
+🧠 Contenedor para el Backend (Node.js + Express + TS + Prisma)
+      Para el backend, usaremos un Multi-stage build que compila el código TypeScript a JavaScript y genera el cliente de Prisma, 
+	  manteniendo la imagen final lo más ligera posible.
+	  
+	  Crea un archivo llamado exactamente Dockerfile en la raíz de tu carpeta de Express:
+	  
+	    dockerfile
+		# --- Fase 1: Compilación ---
+        FROM node:20-alpine AS build
+        WORKDIR /app
+        COPY package*.json ./
+        COPY prisma ./prisma/
+        RUN npm install
+        COPY . .
+
+        # Genera el cliente de Prisma y compila TypeScript
+        RUN npx prisma generate
+        RUN npx typescript
+
+        # --- Fase 2: Ejecución ---
+        FROM node:20-alpine AS runner
+        WORKDIR /app
+        ENV NODE_ENV=production
+        COPY package*.json ./
+        COPY prisma ./prisma/
+        # Instala solo las dependencias de producción
+        RUN npm ci --only=production
+        # Vuelve a generar el cliente de Prisma para producción
+        RUN npx prisma generate
+        # Copia el código compilado desde la fase de build
+        COPY --from=build /app/dist ./dist
+
+        EXPOSE 3000
+        CMD ["node", "dist/index.js"]
+
+🧠 3. Comandos para el Backend:
+      1. Crear la imagen:
+	     
+	       bashdocker 
+		   build -t mi-app-backend . 
+		
+		
+      2. Ejecutar el servicio (en el puerto 3000 de tu PC):
+	  
+	       bashdocker 
+		   run -d -p 3000:3000 --name contenedor-backend mi-app-backend
+		
+	
+      3. Detener el servicio:
+	  
+	       bashdocker 
+		   stop contenedor-backend
+	
+	
+🛠️ Comandos útiles de gestión
+   Si quieres volver a encender un contenedor que ya habías detenido (sin necesidad de volver a crearlo con docker run), 
+   o si quieres borrarlo por completo, usa estos comandos:
+   
+   1. Volver a arrancar un contenedor detenido:
+    
+	    bash
+		docker start contenedor-backend
+				
+   2. Ver qué contenedores están activos ahora mismo:
+   
+        bash
+	    docker ps
+	  
+   3. Ver todos los contenedores (activos y detenidos):
+   
+        bash
+	    docker ps -a
+	  
+   4. Eliminar el contenedor por completo (para poder recrearlo si haces cambios):
+   
+        bash
+		docker rm contenedor-backend
+	
+	
++-------------------------------------------------------------------------------------+
+|                                                                                     |
+| Comando para arrancar el frontend y el backend al mismo tiempo con un solo comando  |
+| sin tener que escribir los comandos de docker run uno por uno.                      |
+|                                                                                     |
++-------------------------------------------------------------------------------------+	
+
+Docker Compose es la herramienta oficial de Docker diseñada exactamente para resolver esto. 
+Te permite definir todo tu ecosistema web (Frontend, Backend y Base de Datos) en un único archivo de configuración 
+para arrancarlo o detenerlo todo junto con un solo comando.
+Para que funcione, tu estructura de carpetas en tu ordenador debería verse más o menos así:
+   
+  text
+  mi-proyecto-fullstack/
+  ├── frontend/             # Carpeta de Vue.js (con su Dockerfile dentro)
+  ├── backend/              # Carpeta de Express (con su Dockerfile dentro)
+  └── docker-compose.yml    # El archivo unificador que crearemos ahora
+
+	 
+📄 1. Crear el archivo docker-compose.yml
+      Ve a la raíz principal de tu proyecto (mi-proyecto-fullstack/), crea un archivo de texto llamado exactamente docker-compose.yml 
+	  y pega la siguiente configuración:
+	  
+	    yaml
+		version: '3.8'
+
+        services:
+          # --- SERVICIO DEL FRONTEND (VUE) ---
+          frontend:
+            container_name: contenedor-frontend
+            build:
+              context: ./frontend   # Ruta a la carpeta del frontend
+              dockerfile: Dockerfile
+            ports:
+              - "8080:80"           # Mapea el puerto 8080 de tu PC al puerto 80 del contenedor
+            depends_on:
+              - backend             # Espera a que el backend encienda antes de arrancar el front
+
+          # --- SERVICIO DEL BACKEND (EXPRESS) ---
+          backend: 
+            container_name: contenedor-backend
+            build:
+              context: ./backend    # Ruta a la carpeta del backend
+              dockerfile: Dockerfile
+            ports:
+              - "3000:3000"         # Mapea el puerto 3000 de tu PC al 3000 del contenedor
+            volumes:
+              - database_data:/app/prisma # Guarda tu archivo de SQLite de forma persistente
+            environment:
+              - DATABASE_URL=file:./dev.db
+
+          volumes:
+             database_data:            # Evita que tus datos de SQLite se borren al apagar el contenedor
+			 
+🚀 2. Comandos para controlar todo tu ecosistema
+   A partir de ahora, olvídate de construir imágenes una por una o de recordar los nombres de los contenedores. 
+   Abre tu terminal en la raíz donde está el archivo docker-compose.yml y usa estos comandos universales:
+   
+   ⚙️ Para construir y arrancar TODO el sistema:
+   
+        bash
+	    docker compose up -d --build
+	  
+      up: Enciende todos los servicios declarados.
+	  -d (detached): Ejecuta los contenedores en segundo plano para que puedas seguir usando tu terminal.
+	  --build: Obliga a Docker a revisar si has hecho cambios en tu código de Vue o Express para compilar las imágenes con tus últimos cambios.
+	  
+   ⚙️ Para ver el estado de tus servicios:
+   
+        bash
+	    docker compose ps
+	  
+   ⚙️ Para detener TODO el sistema (Apagado seguro):
+   
+        bash
+	    docker compose down
+	  
+	  
+      Este comando detiene los contenedores y los limpia de la memoria, pero tus datos de SQLite seguirán a salvo gracias al volumen que configuramos).
+	  
+💡 Un último truco de DevOps
+   Si en algún momento el backend te da un error o quieres ver qué está imprimiendo tu servidor Express en tiempo real (los console.log), 
+   puedes ver las pantallas unificadas de logs ejecutando:
+   
+     bash
+	 docker compose logs -f backend
+	 
+   Con esto ya tienes toda la arquitectura de producción automatizada. 
+
+   
++-------------------------------------------------------------------------------------+
+|                                                                                     |
+| Configuración de las variables de entorno para que la aplicación de Vue sepa        |
+| comunicarse de forma automática con la URL del contenedor de Express en lugar de    |
+| usar localhost                                                                      |
+|                                                                                     |
++-------------------------------------------------------------------------------------+	   
+
+Para lograr que tu aplicación de Vue.js (Frontend) se comunique de forma dinámica y automática con Express (Backend) dentro de Docker, 
+utilizaremos Variables de Entorno. 
+
+En Docker, los contenedores no se comunican usando localhost, sino que se descubren entre sí usando el nombre del servicio que definiste 
+en el archivo docker-compose.yml (en nuestro caso, backend). 
+
+Sigue estos tres sencillos pasos para dejarlo configurado:
+
+🎨 Paso 1: Configurar las variables en el Frontend (Vue.js)
+   Vite requiere que las variables de entorno comiencen estrictamente con el prefijo VITE_ para poder ser expuestas en tu código.
+   1. Ve a la carpeta de tu frontend/.
+   2. Crea un archivo llamado .env.production (para cuando la app corra en Docker/Producción) y añade:
+   
+        ini
+		VITE_API_URL=http://localhost:3000
+	
+	  Nota: Ponemos localhost:3000 aquí porque el navegador web del usuario final —que ejecuta Vue— necesita apuntar al puerto expuesto en tu máquina real
+
+   3. En tus archivos de Vue (por ejemplo, donde hagas tus peticiones con fetch o axios), cambia las URLs fijas por la variable dinámica:
+     
+	    typescript
+		// Ejemplo de petición dinámica en Vue:
+        const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios`);
+        const datos = await respuesta.json();
+		
+⚙️ Paso 2: Modificar el Dockerfile del Frontend para inyectar la variable
+   Dado que Vite procesa y compila el código en texto plano antes de meterlo en Nginx, 
+   la variable debe estar disponible durante el proceso de construcción de Docker.
+   
+   Abre el Dockerfile de tu carpeta frontend/ y añade la instrucción ARG y ENV justo antes del comando npm run build:
+   
+     dockerfile
+	 # --- Fase 1: Compilación ---
+     FROM node:20-alpine AS build
+     WORKDIR /app
+     COPY package*.json ./
+     RUN npm install
+     COPY . .
+
+    # ⬇️ AÑADE ESTAS DOS LÍNEAS AQUÍ ⬇️
+    ARG VITE_API_URL
+    ENV VITE_API_URL=$VITE_API_URL
+
+    RUN npm run build
+
+    # --- Fase 2: Servidor de producción ---
+    FROM nginx:alpine
+    COPY --from=build /app/dist /usr/share/nginx/html
+    EXPOSE 80
+    CMD ["nginx", "-g", "daemon off;"]
+	
+🐙 Paso 3: Pasar el valor desde docker-compose.yml
+   Por último, solo debemos indicarle a Docker Compose qué valor queremos inyectarle al frontend al momento de compilar. 
+   
+   Abre tu archivo docker-compose.yml en la raíz y añade la sección args bajo el servicio de frontend:
+   
+     yamlversion: '3.8'
+
+     services:
+       frontend:
+         container_name: contenedor-frontend
+         build:
+           context: ./frontend
+           dockerfile: Dockerfile
+           # ⬇️ AÑADE ESTA SECCIÓN DE ARGUMENTOS ⬇️
+           args:
+             - VITE_API_URL=http://localhost:3000
+         ports:
+           - "8080:80"
+         depends_on:
+           - backend
+
+       backend:
+         container_name: contenedor-backend
+         # ... (el resto del código del backend se queda exactamente igual)	
+		 
+🔄 Aplicar los cambios
+   Para que Docker destruya los contenedores viejos, lea la nueva configuración e inyecte las variables, 
+   ejecuta en tu terminal:
+   
+     bash
+	 docker compose up -d --build
+	 
+¡Listo! A partir de este momento, si el día de mañana subes tu backend a un servidor en la nube 
+(por ejemplo, https://tuweb.com), solo tendrás que cambiar esa línea en tu docker-compose.yml y tu Frontend sabrá perfectamente 
+a dónde disparar las peticiones sin que tengas que modificar ni una sola línea de tu código de Vue.

@@ -1,0 +1,273 @@
+Deseo realizar una aplicación web sencilla por la cual pueda gestionar los propietarios de varias comunidades de vecinos a través de una base de datos con acciones CRUD y 
+un sistema de ventanas que permita la correcta visualización de los datos. 
+
+La arquitectura de la aplicación será la siguiente: 
+FRONTEND (La pantalla del usuario)
+- Motor    : Vite
+- Framework: Vue.js
+- Lenguaje : TypeScript
+- Diseño   : Tailwind CSS
+
+BACKEND (El cerebro)
+- Motor         : Node.js
+-️ Framework     : Express
+- Base de datos : Prisma
+-️ Almacenamiento: SQLite
+-️ librería (ORM): Prisma
+
+PLAN de la aplicación:
+
+La aplicación debe permitir: 
+1.- La pantalla principal mostrará un menú de opciones a realizar. Este menú estará formado por 4 botones habilitados y accesibles.
+    - "GESTIÓN COM. PROP."
+	- "VISUALIZACIÓN COM. PROP."
+	- "HISTORICO"
+	- "BÚSQUEDA"
+
+1.1.- El primer botón debe poner "GESTIÓN COM. PROP." que al clickar en él, aparecerá una nueva pantalla por la que se realizará la gestion de las comunidades de propietarios (creación, modificación y supresión). 
+      En la ventana se mostrará la siguiente información : 
+	  
+	  A) Dos botones con los nombres siguientes :
+	     - "CREAR COM.PROP."
+		 - "CANCELAR"
+		 
+	  B) Si no existen comunidades de propietarios en la base de datos, debajo de los dos botones anteriores aparecerá un mensaje que diga "NO EXISTEN COMUNIDADES DE PROPIETARIOS".
+	  
+	  C) Si existen comunidades de propietarios en la base de datos, debajo de los dos botones anteriores deben mostrarse en formato listado, siendo accesibles y clickables.
+         El listado debe tener una gestion de paginado que muestre de 10 en 10 las comunidades de propietarios
+	  
+	  D) La línea del listado estará conformada por tres columnas que contendrán la información siguiente: 
+	     - El número de orden o identificativo de la comunidad de propietarios, 
+		 - El nombre de la comunidad de propietarios estará formado por "Vía" + "Dirección" + "Número" (APARTADO E)
+         - La ciudad o población en la que se encuentra.
+	     La primera línea del listado es el encabezado del listado, estará formado por 3 columnas con los nombres:
+         - ID
+		 - COMUNIDAD PROPIETARIOS
+		 - POBLACIÓN
+		 
+	  E) Al clickar en el botón "CREAR COM.PROP.", se abrirá una nueva ventana en la cual aparecerá un formulario para agregar los datos necesarios para la creación de la comunidad de propietarios.
+	     La información a rellenar en el formulario de la comunidad será la siguiente:  
+		 - Vía
+		 - Dirección
+		 - Número
+		 - Código postal
+		 - Urbanización
+		 - Población 
+		 - Número de pisos
+		 - Número de viviendas 
+		 - Número de locales
+		 - Número de sótanos
+		 - Número de parkings
+		 - Número de trasteros
+		 - Fecha de creación del registro (TimeStamp, información dada por el sistema automáticamente y no visualizada en el formulario)
+		 - Fecha de actualización del registro (TimeStamp, información dada por el sistema automáticamente y no visualizada en el formulario, si se actualiza la información)
+		 - Número de actualizaciones (valor numérico de tres cifras. Por defecto valdrá 1 y se irá  incrementando en +1 en cada actualización)
+		 Al final del formulario habrán dos botones:
+		 - "ACEPTAR" que no estará habilitado si el formulario está vacio o falta algún campo obligatorio por cumplimentar (Vía, Dirección, Número, Código postal, Urbanización, 
+		   Población, Número de pisos, Número de viviendas, Número de locales, Número de sótanos, Número de parkings, Número de trasteros), pero sí estará habilitado y accesible si el formulario ha sido rellenado. 
+		   Al ser presionado valida el formulario y guarda la información en la base de datos y se regresa a la ventana anterior. 
+		 - "CANCELAR" el cual aborta la entrada de datos del formulario y hace regresar a la ventana anterior.
+		 
+       F) Una vez creada la comunidad de propietarios y regresar a la ventana anterior, debe aparecer la nueva comunidad de propietarios en el listado accesible y seleccionable.
+	      La primera línea del listado es el encabezado del listado, estará formado por 3 columnas con los nombres:
+         - "ID"
+		 - "COMUNIDAD PROPIETARIOS"
+		 - "POBLACIÓN"	   
+		  
+	   G) Al seleccionar una comunidad de propietarios: 
+	      - Se abrirá una nueva ventana con una ficha que mostrará toda la información de la comunidad
+		  - Al final de los datos de la comunidad aparecerán 3 botones:
+			> "MODIFICAR COMUNIDAD"
+			> "SUPRIMIR COMUNIDAD"
+		    > "CREAR PROPIETARIOS"
+			> "VISUALIZAR PROPIETARIOS"			
+		    > "CANCELAR" el cual hace regresar a la ventana del listado de comunidades.
+		  - Si no existen propietarios asociados a la comunidad de propietarios en la base de datos, debajo de los tres botones anteriores aparecerá un mensaje que diga "NO EXISTEN PROPIETARIOS ASOCIADOS".
+			y el botón "VISUALIZAR PROPIETARIOS" debe aparecer inhabilitado y no accesible.			
+		  - Si existen propietarios asociados a la comunidad de propietarios en la base de datos, debajo de los tres botones anteriores aparecerá un mensaje que diga "XX PROPIETARIOS ASOCIADOS", 
+		    siendo XX el número total de propietarios asociados a la comunidad de propietarios y el botón "VISUALIZAR PROPIETARIOS" debe aparecer habilitado y accesible.
+			
+	   H) Al clickar en el botón "CREAR PROPIETARIOS", se abrirá una nueva ventana en la cual aparecerá un formulario para agregar los datos necesarios para la creación de un propietario.
+	      La información a rellenar en el formulario del propietario será la siguiente:  
+		  - Nombre 
+		  - Apellido1
+		  - Apellido2
+		  - Tipo propiedad (Desplegable con los valores "Vivienda" o "Local") 
+		  - Número propiedad (Si "Tipo propiedad" es igual a vivienda, entonces desplegable con todas las viviendas disponibles en la comunidad y que estén libres, es decir sin asociar a algún propietario.
+		                      Si "Tipo propiedad" es igual a "Local", entonces desplegable con todas los locales disponibles en la comunidad y que estén libres, es decir sin asociar a algún propietario) 
+		  - Piso propiedad 	(desplegable con todos los pisos disponibles en la comunidad. Si la comunidad tiene 3 pisos por ejemplo, en el desplegable aparecerám los valores 1, 2 y 3)
+		  - Tipo (Desplegable con los valores "Propietario", "Inquilino" o "Ayuntamiento") 
+		  - Pertenece (Si el "Tipo" es "Propietario", el campo se rellena automaticamente con "Nombre" + " " + Apellido1 + " " + Apellido2, para el resto de casos se complimenta a mano) 
+		  - Trastero (Desplegable con los valores "Sí" o "No". Si se selecciona "No",los campos "Número trastero" y "Lugar trastero" estarán inhabilitados y no será posible rellenarlos, si se selecciona "Sí", entonces estáran habilitados)
+		  - Número trastero (desplegable con todos los trasteros disponibles en la comunidad y que estén libres, es decir sin asociar a algún propietario)
+		  - Lugar trastero (desplegable con todos los sotanos disponibles en la comunidad. Si la comunidad tiene 3 sotanos por ejemplo, en el desplegable aparecerám los valores 1, 2 y 3)
+		  - Parking (Desplegable con los valores "Sí" o "No". Si se selecciona "No",los campos "Número parking" y "Lugar parking" estarán inhabilitados y no será posible rellenarlos, si se selecciona "Sí", entonces estáran habilitados)		  
+		  - Número parking (desplegable con todos los parkings disponibles en la comunidad y que estén libres, es decir sin asociar a algún propietario)
+		  - Lugar parking (desplegable con todos los sotanos disponibles en la comunidad donde está situada. Si la comunidad tiene 3 sotanos por ejemplo, en el desplegable aparecerám los valores 1, 2 y 3)  
+		  - Fecha de creación del registro (TimeStamp, información dada por el sistema automáticamente y no visualizada en el formulario)
+		  - Fecha de actualización del registro (TimeStamp, información dada por el sistema automáticamente y no visualizada en el formulario, si se actualiza la información)
+		  - Número de actualizaciones (valor numérico de tres cifras. Por defecto valdrá 1 y se irá  incrementando en +1 en cada actualización)		  
+		  Al final del formulario habrán dos botones:
+		  - "ACEPTAR" que no estará habilitado si el formulario está vacio, pero sí estará habilitado si el formulario ha sido rellenado. 
+		     Al ser presionado valida el formulario y guarda la información en la base de datos, regresa a la ficha de la Comunidad de propietarios y el contador en "XX PROPIETARIOS ASOCIADOS" debe incrementarse en +1.
+		  - "CANCELAR" el cual aborta la entrada de datos del formulario y hace regresar a la ventana anterior.
+
+ 	   I) Al clickar en el botón "VISUALIZAR PROPIETARIOS" del apartado G, se abrirá una nueva ventana en la cual aparecerá un listado con todos los propietarios ligados 
+	      a la comunidad de propietarios, accesible y seleccionable.
+	      La primera línea del listado es el encabezado del listado, estará formado por 3 columnas con los nombres:
+          - NÚMERO
+		  - NOMBRE
+		  - TIPO
+ 		  
+	   J) La línea del listado de propietarios estará conformada por tres columnas que contendrán la información siguiente: 
+	     - El número de vivienda del propietario 
+		 - El nombre, apellido1 y apellido2 del propietario
+         - Tipo
+
+	   K) Al seleccionar un propietario: 
+	      - Se abrirá una nueva ventana con una ficha que mostrará toda la información del propietario
+		  - Al final de los datos del propietario aparecerán 3 botones:
+		    > "MODIFICAR".
+		    > "SUPRIMIR".
+		    > "ATRAS" el cual hace regresar a la ventana del listado de propietarios.	   
+          
+          - Al clickar en el botón "MODIFICAR" se verifica el tipo de propietario:
+		    >> Si "Tipo" es propietario, no se podrá modificar el propietario y todos los campos del formulario aparecerán inhabilitados e inaccesibles. 
+			   Se mostrará un mensaje que diga "IMPOSIBLE MODIFICAR. SOLO INQUILINOS O AYUNTAMIENTO" y asociado aparecerá el botón "OK" para regresar a la 
+			   pantalla anterior. 
+		    >> Si "Tipo" es inquilino o ayuntamiento, entonces se habilitarán los siguientes campos del formulario para permitir la modificación de los 
+			   datos del propietario. La información a modificar formulario del propietario será la siguiente:  
+		       > Nombre 
+		       > Apellido1
+		       > Apellido2
+			
+		  - Al final del formulario de modificación habrán dos botones:
+		    > "ACEPTAR" Al ser presionado 
+			   >> La Fecha de actualización del registro (TimeStamp, información dada por el sistema automáticamente y no visualizada en el formulario) será actualizada
+		       >> Número de actualizaciones será incrementando en +1		  
+			   >> valida el formulario y guarda la información en la base de datos y se regresa a la ventana anterior. 
+		    > "CANCELAR" el cual aborta la entrada de datos del formulario y hace regresar a la ventana anterior.
+
+         - Al clickar en el botón "SUPRIMIR"
+		   > Se mostrará el mensaje "¿ESTA SEGURO DE SUPRIMIR EL PROPIETARIO?" con dos posibles respuestas : "SÍ" o "NO". 
+			 >> Si se selecciona "SÍ", aparecerá un campo de texto a rellenar con el titulo "Motivo de la baja" y con los botones "ACEPTAR" y "CANCELAR".
+			    >>> Si se pulsa "ACEPTAR" se copian todos los datos de la comunidad de propietarios en una tabla de historicos (si no existe ya en la tabla historicos de comunidades) 
+				    y del propietario en una tabla de historicos de propietarios para poder ser consultada. La tabla de propietarios historicos tendrá el campo adicional "Motivo de la baja"
+					en el cual se almacenará la información escrita en el campo anteriormente aceptado. 
+				>>> Si se pulsa "CANCELAR", volvemos a la pantalla que muestra los datos del propietario	
+			    >>> El propietario será eliminado de la tabla de propietarios, liberando la propiedad, parking y trastero para dejarlos disponibles en el desplegable para un nuevo propietario.
+			    >>> Una vez realziado esto, se regresa a la pantalla anterior
+			 >> Si se selecciona "NO", volvemos a la pantalla que muestra los datos del propietario
+
+	   L) Al clickar en el botón "SUPRIMIR COMUNIDAD"
+          - Se mostrará el mensaje "¿ESTA SEGURO DE SUPRIMIR LA COMUNIDAD DE PROPIETARIOS?" con dos posibles respuestas : "SÍ" o "NO". 
+			> Si se selecciona "SÍ", se copian todos los datos de la comunidad de propietarios en una tabla de historicos (si no existe ya en la tabla historicos de comunidades ) 
+	     	  y de todos los propietarios ligados en una tabla de historicos de propietarios para poder ser consultada. Se permiten duplicados. 
+			> En la información de la tabla comunidades de propietarios historicos y propietarios historicos, habrá la misma información que las tablas de comunidades de propietarios y de propietarios  
+			a excepción del campo ID de la tabla comunidad de propietarios y de propietarios, en este caso, será creado un nuevo ID en el momento de crear los historicos. 
+			Por otro lado, se agregará un nuevo campo en ambas tablas denominado "Fecha de supresión" de tipo timestamp con la fecha y hora del momento de supresión.
+			> Se realiza borrado en cascada de la comunidad de propietarios y de los propietarios asociados de las tablas originales. 
+			> Se regresa a la pantalla con el listado de comunidades del propietarios
+			> Si se selecciona "NO", volvemos a la pantalla que muestra la información de la comunidad de propietarios
+
+	   M) Al clickar en el botón "MODIFICAR COMUNIDAD" se habilitarán los siguientes campos del formulario para permitir la modificación de los datos de la comunidad de propietarios.
+	      La información a modificar formulario de la comunidad será la siguiente:  
+		 - Vía
+		 - Dirección
+		 - Número
+		 - Código postal
+		 - Urbanización
+		 - Población 
+		 - Número de pisos
+		 - Número de viviendas 
+		 - Número de locales
+		 - Número de sótanos
+		 - Número de parkings
+		 - Número de trasteros
+		 Al final del formulario habrán dos botones:
+		 - "ACEPTAR". Al pulsar el botón se realizarán las siguientes acciones :
+		   > La Fecha de actualización del registro (TimeStamp, información dada por el sistema automáticamente y no visualizada en el formulario) será informada
+		   > Número de actualizaciones será actualizado a +1
+		   > Validación del formulario y guarda la información en la base de datos
+		   > Se regresa a la ventana anterior. 
+		 - "CANCELAR" el cual aborta la entrada de datos del formulario y hace regresar a la ventana anterior.
+		 
+       N) Una vez modificada la comunidad de propietarios y regresar a la ventana anterior, debe aparecer la nueva comunidad de propietarios en el listado accesible y seleccionable.
+	      La primera línea del listado es el encabezado del listado, estará formado por 3 columnas con los nombres:
+         - "ID"
+		 - "COMUNIDAD PROPIETARIOS"
+		 - "POBLACIÓN"	   
+
+
+1.2.- El segundo botón debe poner "VISUALIZACIÓN COM. PROP.", al clickar en él, aparecerá una nueva pantalla por la que se realizará la visualización de las comunidades de propietarios. 
+
+      A) En la pantalla se muestran todas la comunidades de propietarios en formato listado, estando habiles y accesibles.
+	  
+	  B) La primera línea del listado es el encabezado del listado, estará formado por 3 columnas con los nombres:
+         - ID
+		 - COMUNIDAD PROPIETARIOS
+		 - POBLACIÓN
+	  
+	  C) La línea del listado con la información de la comunidad de propietarios estará conformada por tres columnas que contendrán la información siguiente: 
+	     - El número de orden o identificativo de la comunidad de propietarios, 
+		 - El nombre de la comunidad de propietarios formado por el nombre de la calle seguido del número de la calle
+         - La ciudad o población en la que se encuentra.
+
+	  D) Al seleccionar una comunidad de propietarios: 
+	     - Se abrirá una nueva ventana con una ficha que mostrará toda la información de la comunidad
+		 - Al final de los datos de la comunidad aparecerán 2 botones:
+			> "VISUALIZAR PROPIETARIOS"
+		    > "CANCELAR" el cual hace regresar a la ventana anterior.
+		  - Si no existen propietarios asociados a la comunidad de propietarios en la base de datos, debajo de los tres botones anteriores aparecerá un mensaje que diga "NO EXISTEN PROPIETARIOS ASOCIADOS".
+			y el botón "VISUALIZAR PROPIETARIOS" debe aparecer inhabilitado y no accesible.			
+		  - Si existen propietarios asociados a la comunidad de propietarios en la base de datos, debajo de los tres botones anteriores aparecerá un mensaje que diga "XX PROPIETARIOS ASOCIADOS", 
+		    siendo XX el número total de propietarios asociados a la comunidad de propietarios y el botón "VISUALIZAR PROPIETARIOS" debe aparecer habilitado y accesible.
+
+	  E) Al clickar en el botón "VISUALIZAR PROPIETARIOS", se abrirá una nueva ventana en la cual aparecerá un listado con todos los propietarios ligados 
+	      a la comunidad de propietarios, accesible y seleccionable.
+	      La primera línea del listado es el encabezado del listado, estará formado por 3 columnas con los nombres:
+          - NÚMERO
+		  - NOMBRE
+		  - TIPO
+ 		  
+	  F) La línea del listado de propietarios será mostrada en orden de numero de vivienda y locales, estando conformada por tres columnas que contendrán la información siguiente:
+	     - El número de vivienda del propietario 
+		 - El nombre, apellido1 y apellido2 del propietario
+         - Tipo
+
+	  G) Al seleccionar un propietario: 
+	      - Se abrirá una nueva ventana con una ficha que mostrará toda la información del propietario
+		  - Al final de los datos del propietario aparecerán 1 botón:
+		    > "OK" el cual hace regresar a la ventana anterior.	   
+
+
+1.3.- El tercer botón debe poner "HISTORICO". 
+
+      A) El funcionamiento del botón "HISTORICO" es identico al funcionamiento del segundo botón "VISUALIZACIÓN COM. PROP.", 
+	     pero mostrando la información de comunidades de propietarios y propietarios en las tablas históricas
+         - El listado de comunidades de propietarios estará ordenado por fecha de creación mas reciente.
+         - El listado de propietarios estará ordenado por numero de vivienda o numero de local		 
+	  
+	  
+1.4.- El cuarto botón debe poner "BÚSQUEDA". 
+
+      A) al clickar en él se muestra una nueva pantalla con los siguientes elementos :
+	     - Una caja de texto para introducir el texto a buscar 
+		 - Al lado derecho de la caja de texto, un botón con el titulo "Buscar". 
+		   > Si la caja de texto está vacía, el botón estará inhabilitado y no será accesible
+		   > Si la caja de texto contiene información, el botón estará habilitado y será accesible
+		 - Bajo esta caja dos radio buttons con los nombres siguientes :
+	       > "COMUNIDADES"
+		   > "PROPIETARIOS"
+		   
+	  B) Si el check "COMUNIDADES" está seleccionado, y se pulsa el botón "Buscar" habilitado y accesible, entonces: 
+	     - Se buscará en la tabla de comunidades de propietarios todas las comunidades que contengan ese texto en su nombre, mostrando una lista de las coincidencias 
+		   con un formato de lista similar al usado en la VISUALIZACIÓN.
+         - Los registros de la lista estarán habilitados y accesibles. Al hacer click se debe abrir una ventana igual a la "VISUALIZACIÓN COM. PROP."	   
+		 
+	  C) Si el check "PROPIETARIOS" está seleccionado, y se pulsa el botón "Buscar" habilitado y accesible, entonces: 
+	     - Se buscará en la tabla de propietarios todas los propietarios que contengan ese texto en su nombre o apellidos, mostrando una lista de las coincidencias 
+		   con un formato de lista similar al usado en la VISUALIZACIÓN.	  		 
+		 - Los registros de la lista estarán habilitados y accesibles. Al hacer click se debe abrir una ventana igual a la de "VISUALIZAR PROPIETARIOS"	para poder
+		   ver la información
+  

@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+
+# Environment variables
+.env
+
+# Database files
+*.sqlite
+*.db
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts
+frontend/dist/
+
+# AI tool configs
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+
+# Temp files
+*.tmp
+*.temp
