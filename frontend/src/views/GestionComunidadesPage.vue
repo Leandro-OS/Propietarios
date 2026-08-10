@@ -13,7 +13,7 @@
             CREAR COM.PROP.
           </button>
           <button @click="goHome" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-            CANCELAR
+            ATRÁS
           </button>
         </div>
 

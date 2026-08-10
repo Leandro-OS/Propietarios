@@ -32,6 +32,32 @@
               </tr>
             </tbody>
           </table>
+
+          <!-- Paginación -->
+          <div class="flex justify-center items-center gap-4 mt-4">
+            <button
+              @click="changePage(currentPage - 1)"
+              :disabled="currentPage === 1"
+              class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Anterior
+            </button>
+            <span>Página {{ currentPage }} de {{ totalPages }}</span>
+            <button
+              @click="changePage(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+              class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Siguiente
+            </button>
+          </div>
+
+          <!-- Botón ATRÁS -->
+          <div class="flex justify-center mt-6">
+            <button @click="goHome" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+              ATRÁS
+            </button>
+          </div>
         </div>
       </div>
 
@@ -66,6 +92,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import type { Comunidad, Propietario } from '../types';
 import { getComunidades, getComunidadWithPropietarios } from '../services/api';
 import VisualComunidadDetail from '../components/VisualComunidadDetail.vue';
@@ -74,15 +101,33 @@ import VisualPropietarioDetail from '../components/VisualPropietarioDetail.vue';
 
 type ViewState = 'list' | 'detail' | 'propietariosList' | 'propietarioDetail';
 
+const router = useRouter();
+
 const viewState = ref<ViewState>('list');
 const comunidades = ref<Comunidad[]>([]);
 const selectedComunidad = ref<Comunidad | null>(null);
 const selectedPropietario = ref<Propietario | null>(null);
+const currentPage = ref(1);
+const totalPages = ref(1);
 
 onMounted(async () => {
-  const data = await getComunidades(1, 1000);
-  comunidades.value = data.comunidades;
+  await loadComunidades();
 });
+
+const loadComunidades = async () => {
+  const data = await getComunidades(currentPage.value);
+  comunidades.value = data.comunidades;
+  totalPages.value = data.pagination.totalPages;
+};
+
+const changePage = async (page: number) => {
+  currentPage.value = page;
+  await loadComunidades();
+};
+
+const goHome = () => {
+  router.push('/');
+};
 
 const selectComunidad = async (id: number) => {
   selectedComunidad.value = await getComunidadWithPropietarios(id);
