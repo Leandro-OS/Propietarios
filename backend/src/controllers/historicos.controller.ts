@@ -5,10 +5,28 @@ const prisma = new PrismaClient();
 
 export const getComunidadesHistoricas = async (req: Request, res: Response) => {
   try {
-    const comunidades = await prisma.comunidadHistorico.findMany({
-      orderBy: { createdAt: 'desc' }
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+
+    const [comunidades, total] = await Promise.all([
+      prisma.comunidadHistorico.findMany({
+        skip: offset,
+        take: limit,
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.comunidadHistorico.count()
+    ]);
+
+    res.json({
+      comunidades,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
     });
-    res.json(comunidades);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener comunidades históricas' });
   }

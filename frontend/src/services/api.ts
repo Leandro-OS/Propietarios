@@ -87,9 +87,9 @@ export const deletePropietario = async (id: number, motivoBaja?: string) => {
 };
 
 // Historicos
-export const getComunidadesHistoricas = async () => {
-  const res = await fetch(`${API_BASE}/historicos/comunidades`);
-  return res.json() as Promise<ComunidadHistorico[]>;
+export const getComunidadesHistoricas = async (page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/historicos/comunidades?page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ comunidades: ComunidadHistorico[]; pagination: PaginationInfo }>;
 };
 
 export const getComunidadHistoricaById = async (id: number) => {
