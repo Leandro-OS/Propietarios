@@ -17,6 +17,8 @@
                 <th class="border p-3 text-left font-bold text-gray-700">ID</th>
                 <th class="border p-3 text-left font-bold text-gray-700">COMUNIDAD PROPIETARIOS</th>
                 <th class="border p-3 text-left font-bold text-gray-700">POBLACIÓN</th>
+                <th class="border p-3 text-left font-bold text-gray-700">CREACIÓN</th>
+                <th class="border p-3 text-left font-bold text-gray-700">SUPRESIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -29,6 +31,8 @@
                 <td class="border p-3">{{ comunidad.id }}</td>
                 <td class="border p-3">{{ comunidad.via }} {{ comunidad.direccion }} {{ comunidad.numero }}</td>
                 <td class="border p-3">{{ comunidad.poblacion }}</td>
+                <td class="border p-3">{{ formatDate(comunidad.createdAt) }}</td>
+                <td class="border p-3">{{ formatDate(comunidad.fechaSupresion) }}</td>
               </tr>
             </tbody>
           </table>
@@ -94,7 +98,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type { ComunidadHistorico, PropietarioHistorico } from '../types';
-import { getComunidadesHistoricas } from '../services/api';
+import { getComunidadesHistoricas, getComunidadHistoricaById } from '../services/api';
 import VisualComunidadDetail from '../components/VisualComunidadDetail.vue';
 import HistoricoPropietariosList from '../components/HistoricoPropietariosList.vue';
 import VisualPropietarioDetail from '../components/VisualPropietarioDetail.vue';
@@ -130,8 +134,12 @@ const goHome = () => {
 };
 
 const selectComunidad = async (id: number) => {
-  selectedComunidad.value = comunidades.value.find(c => c.id === id) || null;
+  selectedComunidad.value = await getComunidadHistoricaById(id);
   viewState.value = 'detail';
+};
+
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toISOString().split('T')[0];
 };
 
 const selectPropietario = (prop: PropietarioHistorico) => {

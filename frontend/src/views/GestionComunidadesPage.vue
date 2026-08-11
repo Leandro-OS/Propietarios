@@ -132,11 +132,11 @@
       </div>
 
       <!-- Confirmación de eliminación -->
-      <div v-if="viewState === 'confirmDeleteComunidad'" class="bg-white rounded-lg shadow-md p-6">
-        <ConfirmDialog
-          message="¿ESTA SEGURO DE SUPRIMIR LA COMUNIDAD DE PROPIETARIOS?"
-          @yes="viewState = 'detail'"
-          @no="viewState = 'detail'"
+      <div v-if="viewState === 'confirmDeleteComunidad' && selectedComunidad" class="bg-white rounded-lg shadow-md p-6">
+        <ConfirmDeleteComunidad
+          :comunidad-id="selectedComunidad.id"
+          @deleted="handleComunidadDeleted"
+          @cancelled="viewState = 'detail'"
         />
       </div>
 
@@ -159,7 +159,6 @@ import {
   getComunidades,
   createComunidad,
   updateComunidad,
-  deleteComunidad,
   getComunidadWithPropietarios,
   createPropietario,
   updatePropietario
@@ -171,7 +170,7 @@ import CreatePropietarioForm from '../components/CreatePropietarioForm.vue';
 import PropietariosList from '../components/PropietariosList.vue';
 import PropietarioDetail from '../components/PropietarioDetail.vue';
 import ModifyPropietarioForm from '../components/ModifyPropietarioForm.vue';
-import ConfirmDialog from '../components/ConfirmDialog.vue';
+import ConfirmDeleteComunidad from '../components/ConfirmDeleteComunidad.vue';
 import ConfirmDeletePropietario from '../components/ConfirmDeletePropietario.vue';
 
 const router = useRouter();
@@ -233,12 +232,13 @@ const handleModifyComunidad = async (data: Partial<Comunidad>) => {
   }
 };
 
-const confirmDeleteComunidad = async () => {
-  if (selectedComunidad.value) {
-    await deleteComunidad(selectedComunidad.value.id);
-    viewState.value = 'list';
-    await loadComunidades();
-  }
+const confirmDeleteComunidad = () => {
+  viewState.value = 'confirmDeleteComunidad';
+};
+
+const handleComunidadDeleted = async () => {
+  viewState.value = 'list';
+  await loadComunidades();
 };
 
 const selectPropietario = (prop: Propietario) => {

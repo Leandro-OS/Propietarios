@@ -121,8 +121,11 @@ export const updateComunidad = async (req: Request, res: Response) => {
 
 export const deleteComunidad = async (req: Request, res: Response) => {
   try {
+    const { motivo } = req.body;
+    const comunidadId = parseInt(req.params.id as string);
+
     const comunidad = await prisma.comunidad.findUnique({
-      where: { id: parseInt(req.params.id as string) },
+      where: { id: comunidadId },
       include: { propietarios: true }
     });
 
@@ -133,7 +136,7 @@ export const deleteComunidad = async (req: Request, res: Response) => {
     // Save to historico
     const fechaSupresion = new Date();
 
-    await prisma.comunidadHistorico.create({
+    const historicoComunidad = await prisma.comunidadHistorico.create({
       data: {
         via: comunidad.via,
         direccion: comunidad.direccion,
@@ -149,8 +152,8 @@ export const deleteComunidad = async (req: Request, res: Response) => {
         numTrasteros: comunidad.numTrasteros,
         createdAt: comunidad.createdAt,
         updatedAt: comunidad.updatedAt,
-        numActualizaciones: comunidad.numActualizaciones,
-        fechaSupresion
+        fechaSupresion,
+        motivo: motivo || null
       }
     });
 
@@ -172,19 +175,18 @@ export const deleteComunidad = async (req: Request, res: Response) => {
           tieneParking: prop.tieneParking,
           numParking: prop.numParking,
           lugarParking: prop.lugarParking,
-          comunidadId: comunidad.id,
+          comunidadId: historicoComunidad.id,
           createdAt: prop.createdAt,
           updatedAt: prop.updatedAt,
-          numActualizaciones: prop.numActualizaciones,
           fechaSupresion,
-          motivoBaja: null
+          motivo: motivo || null
         }
       });
     }
 
     // Delete cascade
     await prisma.comunidad.delete({
-      where: { id: parseInt(req.params.id as string) }
+      where: { id: comunidadId }
     });
 
     res.json({ message: 'Comunidad eliminada correctamente' });

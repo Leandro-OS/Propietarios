@@ -40,13 +40,48 @@ export interface Propietario {
   numActualizaciones: number;
 }
 
-export interface ComunidadHistorico extends Comunidad {
+export interface ComunidadHistorico {
+  id: number;
+  via: string;
+  direccion: string;
+  numero: string;
+  codigoPostal: string;
+  urbanizacion: string;
+  poblacion: string;
+  numPisos: number;
+  numViviendas: number;
+  numLocales: number;
+  numSotanos: number;
+  numParkings: number;
+  numTrasteros: number;
+  createdAt: string;
+  updatedAt: string;
   fechaSupresion: string;
+  motivo: string | null;
+  propietarios?: PropietarioHistorico[];
 }
 
-export interface PropietarioHistorico extends Propietario {
+export interface PropietarioHistorico {
+  id: number;
+  nombre: string;
+  apellido1: string;
+  apellido2: string;
+  tipoPropiedad: string;
+  numPropiedad: number;
+  pisoPropiedad: number;
+  tipo: string;
+  pertenece: string;
+  tieneTrastero: boolean;
+  numTrastero: number | null;
+  lugarTrastero: number | null;
+  tieneParking: boolean;
+  numParking: number | null;
+  lugarParking: number | null;
+  comunidadId: number;
+  createdAt: string;
+  updatedAt: string;
   fechaSupresion: string;
-  motivoBaja: string | null;
+  motivo: string | null;
 }
 
 export interface PaginationInfo {

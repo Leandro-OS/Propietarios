@@ -50,6 +50,14 @@
         <span class="text-gray-500 text-sm">Nº Trasteros:</span>
         <p class="font-medium">{{ comunidad.numTrasteros }}</p>
       </div>
+      <div v-if="comunidad.fechaSupresion" class="bg-gray-50 p-3 rounded">
+        <span class="text-gray-500 text-sm">Fecha Supresión:</span>
+        <p class="font-medium">{{ formatDate(comunidad.fechaSupresion) }}</p>
+      </div>
+      <div v-if="comunidad.motivo !== undefined" class="bg-gray-50 p-3 rounded">
+        <span class="text-gray-500 text-sm">Motivo:</span>
+        <p class="font-medium">{{ comunidad.motivo || 'Sin indicar' }}</p>
+      </div>
     </div>
 
     <div class="flex flex-wrap gap-3 mb-4">
@@ -91,4 +99,8 @@ const hasPropietarios = computed(() => {
 const propietariosCount = computed(() => {
   return props.comunidad.propietarios ? props.comunidad.propietarios.length : 0;
 });
+
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toISOString().split('T')[0];
+};
 </script>

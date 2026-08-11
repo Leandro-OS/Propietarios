@@ -35,7 +35,10 @@ export const getComunidadesHistoricas = async (req: Request, res: Response) => {
 export const getComunidadHistoricaById = async (req: Request, res: Response) => {
   try {
     const comunidad = await prisma.comunidadHistorico.findUnique({
-      where: { id: parseInt(req.params.id as string) }
+      where: { id: parseInt(req.params.id as string) },
+      include: {
+        propietarios: true
+      }
     });
     if (!comunidad) {
       return res.status(404).json({ error: 'Comunidad histórica no encontrada' });

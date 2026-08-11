@@ -36,9 +36,11 @@ export const updateComunidad = async (id: number, data: Partial<Comunidad>) => {
   return res.json() as Promise<Comunidad>;
 };
 
-export const deleteComunidad = async (id: number) => {
+export const deleteComunidad = async (id: number, motivo?: string) => {
   const res = await fetch(`${API_BASE}/comunidades/${id}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ motivo })
   });
   return res.json();
 };
