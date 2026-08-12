@@ -18,8 +18,8 @@
           <input v-model="form.apellido1" type="text" class="w-full border rounded-lg p-2" required />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Apellido 2 *</label>
-          <input v-model="form.apellido2" type="text" class="w-full border rounded-lg p-2" required />
+          <label class="block text-sm font-medium text-gray-700 mb-1">Apellido 2</label>
+          <input v-model="form.apellido2" type="text" class="w-full border rounded-lg p-2" />
         </div>
       </div>
 
@@ -63,7 +63,7 @@ const form = reactive({
 onMounted(() => {
   form.nombre = props.propietario.nombre;
   form.apellido1 = props.propietario.apellido1;
-  form.apellido2 = props.propietario.apellido2;
+  form.apellido2 = props.propietario.apellido2 || '';
 });
 
 const isFormValid = computed(() => {

@@ -11,16 +11,20 @@
             v-model="searchText"
             type="text"
             class="flex-1 border rounded-lg p-2"
+            :class="{ 'border-red-500': searchError }"
             placeholder="Introducir texto a buscar..."
+            @input="validateSearchText"
           />
           <button
             @click="handleSearch"
-            :disabled="!searchText"
+            :disabled="!searchText || !!searchError"
             class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Buscar
           </button>
         </div>
+
+        <p v-if="searchError" class="text-red-500 text-sm mb-4">{{ searchError }}</p>
 
         <div class="flex gap-6 mb-6">
           <label class="flex items-center gap-2 cursor-pointer">
@@ -71,6 +75,27 @@
                 </tr>
               </tbody>
             </table>
+
+            <!-- Paginación -->
+            <div class="flex justify-between items-center mt-4">
+              <button
+                @click="changeComunidadPage(currentComunidadPage - 1)"
+                :disabled="currentComunidadPage === 1"
+                class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ← ANTERIOR
+              </button>
+              <span class="text-gray-700">
+                Página {{ currentComunidadPage }} de {{ comunidadTotalPages }}
+              </span>
+              <button
+                @click="changeComunidadPage(currentComunidadPage + 1)"
+                :disabled="currentComunidadPage === comunidadTotalPages"
+                class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                SIGUIENTE →
+              </button>
+            </div>
           </div>
         </div>
 
@@ -102,6 +127,27 @@
                 </tr>
               </tbody>
             </table>
+
+            <!-- Paginación -->
+            <div class="flex justify-between items-center mt-4">
+              <button
+                @click="changePropietarioPage(currentPropietarioPage - 1)"
+                :disabled="currentPropietarioPage === 1"
+                class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ← ANTERIOR
+              </button>
+              <span class="text-gray-700">
+                Página {{ currentPropietarioPage }} de {{ propietarioTotalPages }}
+              </span>
+              <button
+                @click="changePropietarioPage(currentPropietarioPage + 1)"
+                :disabled="currentPropietarioPage === propietarioTotalPages"
+                class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                SIGUIENTE →
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -117,10 +163,21 @@
 
       <!-- Lista de Propietarios -->
       <div v-if="viewState === 'propietariosList' && selectedComunidad" class="bg-white rounded-lg shadow-md p-6 mt-4">
-        <VisualPropietariosList
+        <PropietariosList
           :comunidad-id="selectedComunidad.id"
+          :show-create-button="true"
           @select="selectPropietario"
           @back="viewState = 'comunidadDetail'"
+          @create="viewState = 'createPropietario'"
+        />
+      </div>
+
+      <!-- Crear Propietario -->
+      <div v-if="viewState === 'createPropietario' && selectedComunidad" class="bg-white rounded-lg shadow-md p-6 mt-4">
+        <CreatePropietarioForm
+          :comunidad="selectedComunidad"
+          @save="handleCreatePropietario"
+          @cancel="viewState = 'propietariosList'"
         />
       </div>
 
@@ -138,31 +195,67 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { Comunidad, Propietario } from '../types';
-import { buscarComunidades, buscarPropietarios, getComunidadWithPropietarios } from '../services/api';
+import { buscarComunidades, buscarPropietarios, getComunidadWithPropietarios, createPropietario } from '../services/api';
 import VisualComunidadDetail from '../components/VisualComunidadDetail.vue';
-import VisualPropietariosList from '../components/VisualPropietariosList.vue';
+import PropietariosList from '../components/PropietariosList.vue';
 import VisualPropietarioDetail from '../components/VisualPropietarioDetail.vue';
+import CreatePropietarioForm from '../components/CreatePropietarioForm.vue';
 
-type ViewState = 'search' | 'comunidadDetail' | 'propietariosList' | 'propietarioDetail';
+type ViewState = 'search' | 'comunidadDetail' | 'propietariosList' | 'propietarioDetail' | 'createPropietario';
 
 const viewState = ref<ViewState>('search');
 const searchText = ref('');
 const searchType = ref<'comunidades' | 'propietarios'>('comunidades');
 const hasSearched = ref(false);
+const searchError = ref('');
+
 const comunidadesResults = ref<Comunidad[]>([]);
 const propietariosResults = ref<Propietario[]>([]);
+
+const currentComunidadPage = ref(1);
+const currentPropietarioPage = ref(1);
+const comunidadTotalPages = ref(0);
+const propietarioTotalPages = ref(0);
+
 const selectedComunidad = ref<Comunidad | null>(null);
 const selectedPropietario = ref<Propietario | null>(null);
 
+const validateSearchText = () => {
+  const text = searchText.value;
+  const alphanumericRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]*$/;
+  
+  if (text.length > 100) {
+    searchError.value = 'Máximo 100 caracteres permitidos';
+  } else if (!alphanumericRegex.test(text)) {
+    searchError.value = 'Solo se permiten caracteres alfanuméricos';
+  } else {
+    searchError.value = '';
+  }
+};
+
 const handleSearch = async () => {
-  if (!searchText.value) return;
+  if (!searchText.value || searchError.value) return;
 
   if (searchType.value === 'comunidades') {
-    comunidadesResults.value = await buscarComunidades(searchText.value);
+    const result = await buscarComunidades(searchText.value, currentComunidadPage.value);
+    comunidadesResults.value = result.comunidades;
+    comunidadTotalPages.value = result.pagination.totalPages;
   } else {
-    propietariosResults.value = await buscarPropietarios(searchText.value);
+    const result = await buscarPropietarios(searchText.value, currentPropietarioPage.value);
+    propietariosResults.value = result.propietarios;
+    propietarioTotalPages.value = result.pagination.totalPages;
   }
   hasSearched.value = true;
+};
+
+const changeComunidadPage = async (page: number) => {
+  currentComunidadPage.value = page;
+  await handleSearch();
+};
+
+const changePropietarioPage = async (page: number) => {
+  currentPropietarioPage.value = page;
+  await handleSearch();
 };
 
 const selectComunidad = async (comunidad: Comunidad) => {
@@ -173,5 +266,13 @@ const selectComunidad = async (comunidad: Comunidad) => {
 const selectPropietario = (prop: Propietario) => {
   selectedPropietario.value = prop;
   viewState.value = 'propietarioDetail';
+};
+
+const handleCreatePropietario = async (data: Partial<Propietario>) => {
+  await createPropietario(data);
+  if (selectedComunidad.value) {
+    selectedComunidad.value = await getComunidadWithPropietarios(selectedComunidad.value.id);
+  }
+  viewState.value = 'comunidadDetail';
 };
 </script>

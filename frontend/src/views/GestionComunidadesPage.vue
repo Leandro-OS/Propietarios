@@ -106,8 +106,10 @@
       <div v-if="viewState === 'propietariosList' && selectedComunidad" class="bg-white rounded-lg shadow-md p-6">
         <PropietariosList
           :comunidad-id="selectedComunidad.id"
+          :show-create-button="true"
           @select="selectPropietario"
           @back="viewState = 'detail'"
+          @create="viewState = 'createPropietario'"
         />
       </div>
 

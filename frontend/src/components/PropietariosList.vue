@@ -26,32 +26,74 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Paginación -->
+      <div class="flex justify-between items-center mt-4">
+        <button
+          @click="changePage(currentPage - 1)"
+          :disabled="currentPage === 1"
+          class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ← ANTERIOR
+        </button>
+        <span class="text-gray-700">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
+        <button
+          @click="changePage(currentPage + 1)"
+          :disabled="currentPage === totalPages"
+          class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          SIGUIENTE →
+        </button>
+      </div>
     </div>
-    <div class="mt-4">
+
+    <div class="flex gap-4 mt-4">
       <button @click="$emit('back')" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
         ATRÁS
+      </button>
+      <button @click="$emit('create')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+        CREAR PROPIETARIO
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import type { Propietario } from '../types';
 import { getPropietariosByComunidad } from '../services/api';
 
 const props = defineProps<{
   comunidadId: number;
+  showCreateButton?: boolean;
 }>();
 
 defineEmits<{
   select: [propietario: Propietario];
   back: [];
+  create: [];
 }>();
 
-const propietarios = ref<Propietario[]>([]);
+const propietariosAll = ref<Propietario[]>([]);
+const currentPage = ref(1);
+const limit = 10;
+
+const totalPages = computed(() => Math.ceil(propietariosAll.value.length / limit));
+
+const propietarios = computed(() => {
+  const start = (currentPage.value - 1) * limit;
+  return propietariosAll.value.slice(start, start + limit);
+});
+
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
 
 onMounted(async () => {
-  propietarios.value = await getPropietariosByComunidad(props.comunidadId);
+  propietariosAll.value = await getPropietariosByComunidad(props.comunidadId);
 });
 </script>

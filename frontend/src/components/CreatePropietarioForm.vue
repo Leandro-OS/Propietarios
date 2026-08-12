@@ -11,8 +11,8 @@
         <input v-model="form.apellido1" type="text" class="w-full border rounded-lg p-2" required />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Apellido 2 *</label>
-        <input v-model="form.apellido2" type="text" class="w-full border rounded-lg p-2" required />
+        <label class="block text-sm font-medium text-gray-700 mb-1">Apellido 2</label>
+        <input v-model="form.apellido2" type="text" class="w-full border rounded-lg p-2" />
       </div>
     </div>
 
@@ -114,6 +114,15 @@
       </div>
     </div>
 
+    <div v-if="validationErrors.length > 0" class="bg-red-50 border border-red-200 rounded-lg p-3 mt-4">
+      <p v-if="validationErrors.includes('NumeroPropiedad')" class="text-red-600 text-sm">El número de propiedad ya existe</p>
+      <p v-if="validationErrors.includes('PropiedadNoExiste')" class="text-red-600 text-sm">El número de propiedad no existe en esta comunidad</p>
+      <p v-if="validationErrors.includes('NumeroTrastero')" class="text-red-600 text-sm">El número de trastero ya existe</p>
+      <p v-if="validationErrors.includes('TrasteroNoExiste')" class="text-red-600 text-sm">El número de trastero no existe en esta comunidad</p>
+      <p v-if="validationErrors.includes('NumeroParking')" class="text-red-600 text-sm">El número de parking ya existe</p>
+      <p v-if="validationErrors.includes('ParkingNoExiste')" class="text-red-600 text-sm">El número de parking no existe en esta comunidad</p>
+    </div>
+
     <div class="flex gap-4 mt-6">
       <button type="submit" :disabled="!isFormValid" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
         ACEPTAR
@@ -126,8 +135,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, watch } from 'vue';
+import { reactive, computed, watch, ref } from 'vue';
 import type { Comunidad, Propietario } from '../types';
+import { checkPropietarioAvailability } from '../services/api';
 
 const props = defineProps<{
   comunidad: Comunidad;
@@ -209,10 +219,12 @@ watch(() => form.apellido2, () => {
 });
 
 const isFormValid = computed(() => {
-  return form.nombre && form.apellido1 && form.apellido2 &&
+  return form.nombre && form.apellido1 &&
     form.tipoPropiedad && form.numPropiedad && form.pisoPropiedad &&
     form.tipo && form.pertenece;
 });
+
+const validationErrors = ref<string[]>([]);
 
 const onTrasteroChange = () => {
   if (!form.tieneTrastero) {
@@ -228,8 +240,51 @@ const onParkingChange = () => {
   }
 };
 
-const handleSubmit = () => {
-  if (isFormValid.value) {
+const validateAvailability = async () => {
+  const errors: string[] = [];
+
+  if (form.numPropiedad) {
+    const result = await checkPropietarioAvailability({
+      comunidadId: props.comunidad.id,
+      tipoPropiedad: form.tipoPropiedad,
+      numPropiedad: form.numPropiedad
+    });
+    if (result.errors.length > 0) {
+      errors.push(...result.errors);
+    }
+  }
+
+  if (form.tieneTrastero && form.numTrastero) {
+    const result = await checkPropietarioAvailability({
+      comunidadId: props.comunidad.id,
+      tipoPropiedad: form.tipoPropiedad,
+      numTrastero: form.numTrastero
+    });
+    if (result.errors.length > 0) {
+      errors.push(...result.errors);
+    }
+  }
+
+  if (form.tieneParking && form.numParking) {
+    const result = await checkPropietarioAvailability({
+      comunidadId: props.comunidad.id,
+      tipoPropiedad: form.tipoPropiedad,
+      numParking: form.numParking
+    });
+    if (result.errors.length > 0) {
+      errors.push(...result.errors);
+    }
+  }
+
+  validationErrors.value = errors;
+  return errors.length === 0;
+};
+
+const handleSubmit = async () => {
+  if (!isFormValid.value) return;
+
+  const isValid = await validateAvailability();
+  if (isValid) {
     emit('save', { ...form });
   }
 };

@@ -18,8 +18,8 @@
         <input v-model="form.codigoPostal" type="text" class="w-full border rounded-lg p-2" required />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Urbanización *</label>
-        <input v-model="form.urbanizacion" type="text" class="w-full border rounded-lg p-2" required />
+        <label class="block text-sm font-medium text-gray-700 mb-1">Urbanización</label>
+        <input v-model="form.urbanizacion" type="text" class="w-full border rounded-lg p-2" />
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Población *</label>
@@ -94,7 +94,7 @@ onMounted(() => {
   form.direccion = props.comunidad.direccion;
   form.numero = props.comunidad.numero;
   form.codigoPostal = props.comunidad.codigoPostal;
-  form.urbanizacion = props.comunidad.urbanizacion;
+  form.urbanizacion = props.comunidad.urbanizacion || '';
   form.poblacion = props.comunidad.poblacion;
   form.numPisos = props.comunidad.numPisos;
   form.numViviendas = props.comunidad.numViviendas;
@@ -106,7 +106,7 @@ onMounted(() => {
 
 const isFormValid = computed(() => {
   return form.via && form.direccion && form.numero && form.codigoPostal &&
-    form.urbanizacion && form.poblacion &&
+    form.poblacion &&
     form.numPisos !== undefined && form.numViviendas !== undefined &&
     form.numLocales !== undefined && form.numSotanos !== undefined &&
     form.numParkings !== undefined && form.numTrasteros !== undefined;

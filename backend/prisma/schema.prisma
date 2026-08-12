@@ -13,7 +13,7 @@ model Comunidad {
   direccion          String
   numero             String
   codigoPostal       String
-  urbanizacion       String
+  urbanizacion       String?
   poblacion          String
   numPisos           Int
   numViviendas       Int
@@ -31,7 +31,7 @@ model Propietario {
   id                 Int      @id @default(autoincrement())
   nombre             String
   apellido1          String
-  apellido2          String
+  apellido2          String?
   tipoPropiedad      String
   numPropiedad       Int
   pisoPropiedad      Int
@@ -56,7 +56,7 @@ model ComunidadHistorico {
   direccion          String
   numero             String
   codigoPostal       String
-  urbanizacion       String
+  urbanizacion       String?
   poblacion          String
   numPisos           Int
   numViviendas       Int
@@ -75,7 +75,7 @@ model PropietarioHistorico {
   id                 Int      @id @default(autoincrement())
   nombre             String
   apellido1          String
-  apellido2          String
+  apellido2          String?
   tipoPropiedad      String
   numPropiedad       Int
   pisoPropiedad      Int

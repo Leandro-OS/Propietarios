@@ -144,3 +144,62 @@ export const deletePropietario = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al eliminar propietario' });
   }
 };
+
+export const checkPropietarioAvailability = async (req: Request, res: Response) => {
+  try {
+    const { comunidadId, tipoPropiedad, numPropiedad, numTrastero, numParking } = req.body;
+
+    const comunidad = await prisma.comunidad.findUnique({
+      where: { id: comunidadId }
+    });
+
+    if (!comunidad) {
+      return res.status(404).json({ error: 'Comunidad no encontrada' });
+    }
+
+    const existingPropietarios = await prisma.propietario.findMany({
+      where: { comunidadId }
+    });
+
+    const errors: string[] = [];
+
+    // Check numPropiedad
+    if (numPropiedad !== undefined && numPropiedad !== null) {
+      const hasPropiedad = existingPropietarios.some(p => p.numPropiedad === numPropiedad);
+      if (hasPropiedad) {
+        errors.push('NumeroPropiedad');
+      }
+      // Check if numPropiedad > max viviendas/locales based on tipoPropiedad
+      const maxPropiedad = tipoPropiedad === 'Vivienda' ? comunidad.numViviendas : comunidad.numLocales;
+      if (numPropiedad > maxPropiedad) {
+        errors.push('PropiedadNoExiste');
+      }
+    }
+
+    // Check numTrastero
+    if (numTrastero !== undefined && numTrastero !== null) {
+      const hasTrastero = existingPropietarios.some(p => p.numTrastero === numTrastero && p.tieneTrastero);
+      if (hasTrastero) {
+        errors.push('NumeroTrastero');
+      }
+      if (numTrastero > comunidad.numTrasteros) {
+        errors.push('TrasteroNoExiste');
+      }
+    }
+
+    // Check numParking
+    if (numParking !== undefined && numParking !== null) {
+      const hasParking = existingPropietarios.some(p => p.numParking === numParking && p.tieneParking);
+      if (hasParking) {
+        errors.push('NumeroParking');
+      }
+      if (numParking > comunidad.numParkings) {
+        errors.push('ParkingNoExiste');
+      }
+    }
+
+    res.json({ errors });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al verificar disponibilidad' });
+  }
+};

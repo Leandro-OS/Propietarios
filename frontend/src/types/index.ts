@@ -4,7 +4,7 @@ export interface Comunidad {
   direccion: string;
   numero: string;
   codigoPostal: string;
-  urbanizacion: string;
+  urbanizacion: string | null;
   poblacion: string;
   numPisos: number;
   numViviendas: number;
@@ -22,7 +22,7 @@ export interface Propietario {
   id: number;
   nombre: string;
   apellido1: string;
-  apellido2: string;
+  apellido2: string | null;
   tipoPropiedad: string;
   numPropiedad: number;
   pisoPropiedad: number;
@@ -46,7 +46,7 @@ export interface ComunidadHistorico {
   direccion: string;
   numero: string;
   codigoPostal: string;
-  urbanizacion: string;
+  urbanizacion: string | null;
   poblacion: string;
   numPisos: number;
   numViviendas: number;
@@ -65,7 +65,7 @@ export interface PropietarioHistorico {
   id: number;
   nombre: string;
   apellido1: string;
-  apellido2: string;
+  apellido2: string | null;
   tipoPropiedad: string;
   numPropiedad: number;
   pisoPropiedad: number;

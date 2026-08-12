@@ -110,12 +110,27 @@ export const getPropietarioHistoricoById = async (id: number) => {
 };
 
 // Busqueda
-export const buscarComunidades = async (texto: string) => {
-  const res = await fetch(`${API_BASE}/busqueda/comunidades?texto=${encodeURIComponent(texto)}`);
-  return res.json() as Promise<Comunidad[]>;
+export const buscarComunidades = async (texto: string, page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/busqueda/comunidades?texto=${encodeURIComponent(texto)}&page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ comunidades: Comunidad[]; pagination: PaginationInfo }>;
 };
 
-export const buscarPropietarios = async (texto: string) => {
-  const res = await fetch(`${API_BASE}/busqueda/propietarios?texto=${encodeURIComponent(texto)}`);
-  return res.json() as Promise<Propietario[]>;
+export const buscarPropietarios = async (texto: string, page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/busqueda/propietarios?texto=${encodeURIComponent(texto)}&page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ propietarios: Propietario[]; pagination: PaginationInfo }>;
+};
+
+export const checkPropietarioAvailability = async (data: {
+  comunidadId: number;
+  tipoPropiedad: string;
+  numPropiedad?: number;
+  numTrastero?: number;
+  numParking?: number;
+}) => {
+  const res = await fetch(`${API_BASE}/propietarios/check-availability`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json() as Promise<{ errors: string[] }>;
 };
