@@ -14,8 +14,9 @@ export const buscarComunidades = async (req: Request, res: Response) => {
       prisma.comunidad.findMany({
         where: {
           OR: [
-            { direccion: { contains: texto, mode: 'insensitive' } },
-            { poblacion: { contains: texto, mode: 'insensitive' } }
+            { via: { contains: texto } },
+            { direccion: { contains: texto } },
+            { poblacion: { contains: texto } }
           ]
         },
         skip: offset,
@@ -25,8 +26,9 @@ export const buscarComunidades = async (req: Request, res: Response) => {
       prisma.comunidad.count({
         where: {
           OR: [
-            { direccion: { contains: texto, mode: 'insensitive' } },
-            { poblacion: { contains: texto, mode: 'insensitive' } }
+            { via: { contains: texto } },
+            { direccion: { contains: texto } },
+            { poblacion: { contains: texto } }
           ]
         }
       })
@@ -57,10 +59,10 @@ export const buscarPropietarios = async (req: Request, res: Response) => {
       prisma.propietario.findMany({
         where: {
           OR: [
-            { nombre: { contains: texto, mode: 'insensitive' } },
-            { apellido1: { contains: texto, mode: 'insensitive' } },
-            { apellido2: { contains: texto, mode: 'insensitive' } },
-            { tipo: { contains: texto, mode: 'insensitive' } }
+            { nombre: { contains: texto } },
+            { apellido1: { contains: texto } },
+            { apellido2: { contains: texto } },
+            { tipo: { contains: texto } }
           ]
         },
         skip: offset,
@@ -70,10 +72,10 @@ export const buscarPropietarios = async (req: Request, res: Response) => {
       prisma.propietario.count({
         where: {
           OR: [
-            { nombre: { contains: texto, mode: 'insensitive' } },
-            { apellido1: { contains: texto, mode: 'insensitive' } },
-            { apellido2: { contains: texto, mode: 'insensitive' } },
-            { tipo: { contains: texto, mode: 'insensitive' } }
+            { nombre: { contains: texto } },
+            { apellido1: { contains: texto } },
+            { apellido2: { contains: texto } },
+            { tipo: { contains: texto } }
           ]
         }
       })
