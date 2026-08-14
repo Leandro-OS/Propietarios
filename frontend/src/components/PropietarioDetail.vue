@@ -31,8 +31,8 @@
         <p class="font-medium">{{ propietario.tipo }}</p>
       </div>
       <div class="bg-gray-50 p-3 rounded">
-        <span class="text-gray-500 text-sm">Pertenece:</span>
-        <p class="font-medium">{{ propietario.pertenece }}</p>
+        <span class="text-gray-500 text-sm">Residente:</span>
+        <p class="font-medium">{{ propietario.residente }}</p>
       </div>
       <div class="bg-gray-50 p-3 rounded">
         <span class="text-gray-500 text-sm">Trastero:</span>

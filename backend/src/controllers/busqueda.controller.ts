@@ -62,6 +62,7 @@ export const buscarPropietarios = async (req: Request, res: Response) => {
             { nombre: { contains: texto } },
             { apellido1: { contains: texto } },
             { apellido2: { contains: texto } },
+            { tipoPropiedad: { contains: texto } },
             { tipo: { contains: texto } }
           ]
         },
@@ -75,6 +76,7 @@ export const buscarPropietarios = async (req: Request, res: Response) => {
             { nombre: { contains: texto } },
             { apellido1: { contains: texto } },
             { apellido2: { contains: texto } },
+            { tipoPropiedad: { contains: texto } },
             { tipo: { contains: texto } }
           ]
         }

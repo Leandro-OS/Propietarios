@@ -108,11 +108,12 @@
           <div v-else>
             <table class="w-full border-collapse">
               <thead>
-                <tr class="bg-gray-200">
-                  <th class="border p-3 text-left font-bold text-gray-700">NÚMERO</th>
-                  <th class="border p-3 text-left font-bold text-gray-700">NOMBRE</th>
-                  <th class="border p-3 text-left font-bold text-gray-700">TIPO</th>
-                </tr>
+              <tr class="bg-gray-200">
+                <th class="border p-3 text-left font-bold text-gray-700">NÚMERO</th>
+                <th class="border p-3 text-left font-bold text-gray-700">NOMBRE</th>
+                <th class="border p-3 text-left font-bold text-gray-700">PROPIEDAD</th>
+                <th class="border p-3 text-left font-bold text-gray-700">TIPO</th>
+              </tr>
               </thead>
               <tbody>
                 <tr
@@ -123,6 +124,7 @@
                 >
                   <td class="border p-3">{{ prop.numPropiedad }}</td>
                   <td class="border p-3">{{ prop.nombre }} {{ prop.apellido1 }} {{ prop.apellido2 }}</td>
+                  <td class="border p-3">{{ prop.tipoPropiedad }}</td>
                   <td class="border p-3">{{ prop.tipo }}</td>
                 </tr>
               </tbody>

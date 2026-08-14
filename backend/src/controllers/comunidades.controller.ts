@@ -168,7 +168,7 @@ export const deleteComunidad = async (req: Request, res: Response) => {
           numPropiedad: prop.numPropiedad,
           pisoPropiedad: prop.pisoPropiedad,
           tipo: prop.tipo,
-          pertenece: prop.pertenece,
+          residente: prop.residente,
           tieneTrastero: prop.tieneTrastero,
           numTrastero: prop.numTrastero,
           lugarTrastero: prop.lugarTrastero,

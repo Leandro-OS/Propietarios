@@ -24,21 +24,28 @@
           <option value="">Seleccionar...</option>
           <option value="Vivienda">Vivienda</option>
           <option value="Local">Local</option>
+          <option value="Trastero">Trastero</option>
+          <option value="Garaje">Garaje</option>
+          <option value="Otros">Otros</option>
         </select>
       </div>
-      <div>
+      <div v-if="form.tipoPropiedad !== 'Otros'">
         <label class="block text-sm font-medium text-gray-700 mb-1">Número Propiedad *</label>
         <select v-model.number="form.numPropiedad" class="w-full border rounded-lg p-2" required>
           <option value="">Seleccionar...</option>
           <option v-for="n in availablePropiedades" :key="n" :value="n">{{ n }}</option>
         </select>
       </div>
-      <div>
+      <div v-if="form.tipoPropiedad !== 'Otros'">
         <label class="block text-sm font-medium text-gray-700 mb-1">Piso Propiedad *</label>
         <select v-model.number="form.pisoPropiedad" class="w-full border rounded-lg p-2" required>
           <option value="">Seleccionar...</option>
           <option v-for="n in pisosDisponibles" :key="n" :value="n">{{ n }}</option>
         </select>
+      </div>
+      <div v-if="form.tipoPropiedad === 'Otros'" class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción Propiedad</label>
+        <input v-model="form.descripcionPropiedad" type="text" maxlength="50" class="w-full border rounded-lg p-2" placeholder="Máximo 50 caracteres" />
       </div>
     </div>
 
@@ -53,9 +60,9 @@
         </select>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Pertenece</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Residente</label>
         <input
-          v-model="form.pertenece"
+          v-model="form.residente"
           type="text"
           class="w-full border rounded-lg p-2"
           :readonly="form.tipo === 'Propietario'"
@@ -156,14 +163,15 @@ const form = reactive({
   numPropiedad: undefined as number | undefined,
   pisoPropiedad: undefined as number | undefined,
   tipo: '',
-  pertenece: '',
+  residente: '',
   tieneTrastero: false,
   numTrastero: undefined as number | undefined,
   lugarTrastero: undefined as number | undefined,
   tieneParking: false,
   numParking: undefined as number | undefined,
   lugarParking: undefined as number | undefined,
-  comunidadId: props.comunidad.id
+  comunidadId: props.comunidad.id,
+  descripcionPropiedad: ''
 });
 
 const pisosDisponibles = computed(() => {
@@ -194,34 +202,36 @@ const parkingsDisponibles = computed(() => {
 
 watch(() => form.tipo, (newVal) => {
   if (newVal === 'Propietario') {
-    form.pertenece = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
+    form.residente = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
   } else {
-    form.pertenece = '';
+    form.residente = '';
   }
 });
 
 watch(() => form.nombre, () => {
   if (form.tipo === 'Propietario') {
-    form.pertenece = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
+    form.residente = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
   }
 });
 
 watch(() => form.apellido1, () => {
   if (form.tipo === 'Propietario') {
-    form.pertenece = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
+    form.residente = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
   }
 });
 
 watch(() => form.apellido2, () => {
   if (form.tipo === 'Propietario') {
-    form.pertenece = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
+    form.residente = `${form.nombre} ${form.apellido1} ${form.apellido2}`;
   }
 });
 
 const isFormValid = computed(() => {
+  const isOtros = form.tipoPropiedad === 'Otros';
   return form.nombre && form.apellido1 &&
-    form.tipoPropiedad && form.numPropiedad && form.pisoPropiedad &&
-    form.tipo && form.pertenece;
+    form.tipoPropiedad &&
+    (isOtros || (form.numPropiedad && form.pisoPropiedad)) &&
+    form.tipo && form.residente;
 });
 
 const validationErrors = ref<string[]>([]);

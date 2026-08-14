@@ -24,10 +24,10 @@ export interface Propietario {
   apellido1: string;
   apellido2: string | null;
   tipoPropiedad: string;
-  numPropiedad: number;
-  pisoPropiedad: number;
+  numPropiedad: number | null;
+  pisoPropiedad: number | null;
   tipo: string;
-  pertenece: string;
+  residente: string | null;
   tieneTrastero: boolean;
   numTrastero: number | null;
   lugarTrastero: number | null;
@@ -38,6 +38,7 @@ export interface Propietario {
   createdAt: string;
   updatedAt: string;
   numActualizaciones: number;
+  descripcionPropiedad: string | null;
 }
 
 export interface ComunidadHistorico {
@@ -67,10 +68,10 @@ export interface PropietarioHistorico {
   apellido1: string;
   apellido2: string | null;
   tipoPropiedad: string;
-  numPropiedad: number;
-  pisoPropiedad: number;
+  numPropiedad: number | null;
+  pisoPropiedad: number | null;
   tipo: string;
-  pertenece: string;
+  residente: string | null;
   tieneTrastero: boolean;
   numTrastero: number | null;
   lugarTrastero: number | null;
@@ -82,6 +83,7 @@ export interface PropietarioHistorico {
   updatedAt: string;
   fechaSupresion: string;
   motivo: string | null;
+  descripcionPropiedad: string | null;
 }
 
 export interface PaginationInfo {

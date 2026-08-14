@@ -67,7 +67,7 @@ onMounted(() => {
 });
 
 const isFormValid = computed(() => {
-  return form.nombre && form.apellido1 && form.apellido2;
+  return form.nombre && form.apellido1;
 });
 
 const handleSubmit = () => {

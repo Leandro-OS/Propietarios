@@ -47,8 +47,8 @@ export const createPropietario = async (req: Request, res: Response) => {
   try {
     const {
       nombre, apellido1, apellido2, tipoPropiedad, numPropiedad, pisoPropiedad,
-      tipo, pertenece, tieneTrastero, numTrastero, lugarTrastero,
-      tieneParking, numParking, lugarParking, comunidadId
+      tipo, residente, tieneTrastero, numTrastero, lugarTrastero,
+      tieneParking, numParking, lugarParking, comunidadId, descripcionPropiedad
     } = req.body;
 
     const propietario = await prisma.propietario.create({
@@ -60,14 +60,15 @@ export const createPropietario = async (req: Request, res: Response) => {
         numPropiedad,
         pisoPropiedad,
         tipo,
-        pertenece,
+        residente,
         tieneTrastero,
         numTrastero,
         lugarTrastero,
         tieneParking,
         numParking,
         lugarParking,
-        comunidadId
+        comunidadId,
+        descripcionPropiedad
       }
     });
     res.status(201).json(propietario);
@@ -86,7 +87,7 @@ export const updatePropietario = async (req: Request, res: Response) => {
         nombre,
         apellido1,
         apellido2,
-        pertenece: `${nombre} ${apellido1} ${apellido2}`,
+        residente: `${nombre} ${apellido1} ${apellido2}`,
         numActualizaciones: { increment: 1 }
       }
     });
@@ -118,7 +119,7 @@ export const deletePropietario = async (req: Request, res: Response) => {
         numPropiedad: propietario.numPropiedad,
         pisoPropiedad: propietario.pisoPropiedad,
         tipo: propietario.tipo,
-        pertenece: propietario.pertenece,
+        residente: propietario.residente,
         tieneTrastero: propietario.tieneTrastero,
         numTrastero: propietario.numTrastero,
         lugarTrastero: propietario.lugarTrastero,
@@ -130,7 +131,8 @@ export const deletePropietario = async (req: Request, res: Response) => {
         updatedAt: propietario.updatedAt,
         numActualizaciones: propietario.numActualizaciones,
         fechaSupresion: new Date(),
-        motivoBaja: motivoBaja
+        motivo: motivoBaja,
+        descripcionPropiedad: propietario.descripcionPropiedad
       }
     });
 

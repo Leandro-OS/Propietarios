@@ -33,10 +33,10 @@ model Propietario {
   apellido1          String
   apellido2          String?
   tipoPropiedad      String
-  numPropiedad       Int
-  pisoPropiedad      Int
+  numPropiedad       Int?
+  pisoPropiedad      Int?
   tipo               String
-  pertenece          String
+  residente          String?
   tieneTrastero      Boolean  @default(false)
   numTrastero        Int?
   lugarTrastero      Int?
@@ -48,6 +48,7 @@ model Propietario {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   numActualizaciones Int      @default(1)
+  descripcionPropiedad String?
 }
 
 model ComunidadHistorico {
@@ -77,10 +78,10 @@ model PropietarioHistorico {
   apellido1          String
   apellido2          String?
   tipoPropiedad      String
-  numPropiedad       Int
-  pisoPropiedad      Int
+  numPropiedad       Int?
+  pisoPropiedad      Int?
   tipo               String
-  pertenece          String
+  residente          String?
   tieneTrastero      Boolean
   numTrastero        Int?
   lugarTrastero      Int?
@@ -93,4 +94,5 @@ model PropietarioHistorico {
   updatedAt          DateTime
   fechaSupresion     DateTime
   motivo             String?
+  descripcionPropiedad String?
 }
