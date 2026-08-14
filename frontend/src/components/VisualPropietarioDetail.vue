@@ -18,6 +18,10 @@
         <span class="text-gray-500 text-sm">Tipo Propiedad:</span>
         <p class="font-medium">{{ propietario.tipoPropiedad }}</p>
       </div>
+      <div v-if="propietario.descripcionPropiedad" class="bg-gray-50 p-3 rounded">
+        <span class="text-gray-500 text-sm">Descripción Propiedad:</span>
+        <p class="font-medium">{{ propietario.descripcionPropiedad }}</p>
+      </div>
       <div class="bg-gray-50 p-3 rounded">
         <span class="text-gray-500 text-sm">Número Propiedad:</span>
         <p class="font-medium">{{ propietario.numPropiedad }}</p>

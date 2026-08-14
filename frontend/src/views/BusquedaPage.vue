@@ -2,7 +2,12 @@
   <div class="min-h-screen bg-gray-100 p-4">
     <div class="max-w-6xl mx-auto">
       <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-        <h1 class="text-2xl font-bold text-gray-800">Búsqueda</h1>
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-gray-800">Búsqueda</h1>
+          <button @click="goBack" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+            ATRÁS
+          </button>
+        </div>
       </div>
 
       <div class="bg-white rounded-lg shadow-md p-6">
@@ -96,6 +101,13 @@
                 SIGUIENTE →
               </button>
             </div>
+
+            <!-- Botón ATRÁS -->
+            <div class="flex justify-end mt-4">
+              <button @click="resetSearch" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                ATRÁS
+              </button>
+            </div>
           </div>
         </div>
 
@@ -150,6 +162,13 @@
                 SIGUIENTE →
               </button>
             </div>
+
+            <!-- Botón ATRÁS -->
+            <div class="flex justify-end mt-4">
+              <button @click="resetSearch" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                ATRÁS
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -196,12 +215,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import type { Comunidad, Propietario } from '../types';
 import { buscarComunidades, buscarPropietarios, getComunidadWithPropietarios, createPropietario } from '../services/api';
 import VisualComunidadDetail from '../components/VisualComunidadDetail.vue';
 import PropietariosList from '../components/PropietariosList.vue';
 import VisualPropietarioDetail from '../components/VisualPropietarioDetail.vue';
 import CreatePropietarioForm from '../components/CreatePropietarioForm.vue';
+
+const router = useRouter();
 
 type ViewState = 'search' | 'comunidadDetail' | 'propietariosList' | 'propietarioDetail' | 'createPropietario';
 
@@ -276,5 +298,21 @@ const handleCreatePropietario = async (data: Partial<Propietario>) => {
     selectedComunidad.value = await getComunidadWithPropietarios(selectedComunidad.value.id);
   }
   viewState.value = 'comunidadDetail';
+};
+
+const goBack = () => {
+  router.push('/');
+};
+
+const resetSearch = () => {
+  hasSearched.value = false;
+  searchText.value = '';
+  comunidadesResults.value = [];
+  propietariosResults.value = [];
+  selectedComunidad.value = null;
+  selectedPropietario.value = null;
+  viewState.value = 'search';
+  currentComunidadPage.value = 1;
+  currentPropietarioPage.value = 1;
 };
 </script>

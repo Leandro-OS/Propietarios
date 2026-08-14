@@ -28,27 +28,27 @@ model Comunidad {
 }
 
 model Propietario {
-  id                 Int      @id @default(autoincrement())
-  nombre             String
-  apellido1          String
-  apellido2          String?
-  tipoPropiedad      String
-  numPropiedad       Int?
-  pisoPropiedad      Int?
-  tipo               String
-  residente          String?
-  tieneTrastero      Boolean  @default(false)
-  numTrastero        Int?
-  lugarTrastero      Int?
-  tieneParking       Boolean  @default(false)
-  numParking         Int?
-  lugarParking       Int?
-  comunidadId        Int
-  comunidad          Comunidad @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  numActualizaciones Int      @default(1)
+  id                   Int      @id @default(autoincrement())
+  nombre               String
+  apellido1            String
+  apellido2            String?
+  tipoPropiedad        String
   descripcionPropiedad String?
+  numPropiedad         Int?
+  pisoPropiedad        Int?
+  tipo                 String
+  residente            String?
+  tieneTrastero        Boolean  @default(false)
+  numTrastero          Int?
+  lugarTrastero        Int?
+  tieneParking         Boolean  @default(false)
+  numParking           Int?
+  lugarParking         Int?
+  comunidadId          Int
+  comunidad            Comunidad @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  numActualizaciones   Int      @default(1)
 }
 
 model ComunidadHistorico {
@@ -73,26 +73,26 @@ model ComunidadHistorico {
 }
 
 model PropietarioHistorico {
-  id                 Int      @id @default(autoincrement())
-  nombre             String
-  apellido1          String
-  apellido2          String?
-  tipoPropiedad      String
-  numPropiedad       Int?
-  pisoPropiedad      Int?
-  tipo               String
-  residente          String?
-  tieneTrastero      Boolean
-  numTrastero        Int?
-  lugarTrastero      Int?
-  tieneParking       Boolean
-  numParking         Int?
-  lugarParking       Int?
-  comunidadId        Int
-  comunidad          ComunidadHistorico @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime
-  fechaSupresion     DateTime
-  motivo             String?
+  id                   Int      @id @default(autoincrement())
+  nombre               String
+  apellido1            String
+  apellido2            String?
+  tipoPropiedad        String
   descripcionPropiedad String?
+  numPropiedad         Int?
+  pisoPropiedad        Int?
+  tipo                 String
+  residente            String?
+  tieneTrastero        Boolean
+  numTrastero          Int?
+  lugarTrastero        Int?
+  tieneParking         Boolean
+  numParking           Int?
+  lugarParking         Int?
+  comunidadId          Int
+  comunidad            ComunidadHistorico @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime
+  fechaSupresion       DateTime
+  motivo               String?
 }
