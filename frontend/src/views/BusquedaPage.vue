@@ -102,10 +102,10 @@
               </button>
             </div>
 
-            <!-- Botón ATRÁS -->
+            <!-- Botón CERRAR -->
             <div class="flex justify-end mt-4">
               <button @click="resetSearch" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-                ATRÁS
+                CERRAR
               </button>
             </div>
           </div>
@@ -163,10 +163,10 @@
               </button>
             </div>
 
-            <!-- Botón ATRÁS -->
+            <!-- Botón CERRAR -->
             <div class="flex justify-end mt-4">
               <button @click="resetSearch" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-                ATRÁS
+                CERRAR
               </button>
             </div>
           </div>

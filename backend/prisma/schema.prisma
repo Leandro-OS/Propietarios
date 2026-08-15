@@ -25,6 +25,7 @@ model Comunidad {
   updatedAt          DateTime @updatedAt
   numActualizaciones Int      @default(1)
   propietarios       Propietario[]
+  incidenciasComunidad IncidenciaComunidadTitulo[]
 }
 
 model Propietario {
@@ -49,6 +50,7 @@ model Propietario {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   numActualizaciones   Int      @default(1)
+  incidenciasPropietario IncidenciaPropietarioTitulo[]
 }
 
 model ComunidadHistorico {
@@ -95,4 +97,32 @@ model PropietarioHistorico {
   updatedAt            DateTime
   fechaSupresion       DateTime
   motivo               String?
+}
+
+model IncidenciaComunidadTitulo {
+  idIncidencia        Int      @id @default(autoincrement())
+  idCom              Int
+  comunidad           Comunidad @relation(fields: [idCom], references: [id], onDelete: Cascade)
+  tipoIncidencia      String
+  subtipoIncidencia   String?
+  descripcion         String
+  estado              String
+  descripcionEstado   String
+  fechaCreacion       DateTime @default(now())
+  fechaModificacion   DateTime?
+  fechaCierre         DateTime?
+}
+
+model IncidenciaPropietarioTitulo {
+  idIncidencia        Int      @id @default(autoincrement())
+  idPro              Int
+  propietario         Propietario @relation(fields: [idPro], references: [id], onDelete: Cascade)
+  tipoIncidencia      String
+  subtipoIncidencia   String?
+  descripcion         String
+  estado              String
+  descripcionEstado   String?
+  fechaCreacion       DateTime @default(now())
+  fechaModificacion   DateTime?
+  fechaCierre         DateTime?
 }
