@@ -13,6 +13,13 @@
         </button>
 
         <button
+          @click="navigateTo('/incidencias')"
+          class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-md"
+        >
+          <span class="text-lg">GESTIÓN INCIDENCIAS</span>
+        </button>
+
+        <button
           @click="navigateTo('/visualizacion')"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-md"
         >
