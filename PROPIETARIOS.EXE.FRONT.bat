@@ -8,6 +8,6 @@ echo Puerto 5173 liberado con exito.
 pause
 
 :: Ejecutar FRONTEBD aplicación PROPIETARIOS
-cd /d "C:\Users\leaol\OneDrive\Documentos\PROPIETARIOS\frontend"
+cd .\frontend"
 npm run dev
 pause

@@ -8,6 +8,6 @@ echo Puerto 5555 liberado con exito.
 pause
 
 :: Ejecutar PRIMSA Gestor Base de datos de la aplicación PROPIETARIOS
-cd /d "C:\Users\leaol\OneDrive\Documentos\PROPIETARIOS\backend"
+cd .\backend"
 npm run db:studio
 pause

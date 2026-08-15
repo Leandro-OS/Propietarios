@@ -8,6 +8,6 @@ echo Puerto 3001 liberado con exito.
 pause
 
 :: Ejecutar BACKEND aplicación PROPIETARIOS
-cd /d "C:\Users\leaol\OneDrive\Documentos\PROPIETARIOS\backend"
+cd .\backend"
 npm run dev
 pause

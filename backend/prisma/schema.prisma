@@ -111,6 +111,7 @@ model IncidenciaComunidadTitulo {
   fechaCreacion       DateTime @default(now())
   fechaModificacion   DateTime?
   fechaCierre         DateTime?
+  registros           IncidenciaComunidadRegistros[]
 }
 
 model IncidenciaPropietarioTitulo {
@@ -125,4 +126,29 @@ model IncidenciaPropietarioTitulo {
   fechaCreacion       DateTime @default(now())
   fechaModificacion   DateTime?
   fechaCierre         DateTime?
+  registros           IncidenciaPropietarioRegistros[]
+}
+
+model IncidenciaComunidadRegistros {
+  idIncComReg         Int      @id @default(autoincrement())
+  idIncCom            Int
+  incidenciaTitulo    IncidenciaComunidadTitulo @relation(fields: [idIncCom], references: [idIncidencia], onDelete: Cascade)
+  tipoIncidencia      String
+  subtipoIncidencia   String?
+  descripcion         String
+  estado              String
+  descripcionEstado   String
+  fechaCreacion       DateTime @default(now())
+}
+
+model IncidenciaPropietarioRegistros {
+  idIncProReg         Int      @id @default(autoincrement())
+  idIncPro            Int
+  incidenciaTitulo    IncidenciaPropietarioTitulo @relation(fields: [idIncPro], references: [idIncidencia], onDelete: Cascade)
+  tipoIncidencia      String
+  subtipoIncidencia   String?
+  descripcion         String
+  estado              String
+  descripcionEstado   String?
+  fechaCreacion       DateTime @default(now())
 }
