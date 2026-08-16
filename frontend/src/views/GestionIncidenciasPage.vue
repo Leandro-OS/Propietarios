@@ -3,12 +3,7 @@
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-        <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-bold text-gray-800">Gestión de Incidencias</h1>
-          <button @click="goBack" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
-            ATRÁS
-          </button>
-        </div>
+        <h1 class="text-2xl font-bold text-gray-800">Gestión de Incidencias</h1>
       </div>
 
       <!-- Tabs -->
@@ -46,9 +41,17 @@
 
         <!-- Tab Content: Comunidades -->
         <div v-if="activeTab === 'comunidades'" class="py-4">
-          <div class="text-center py-8 text-gray-500">
-            <p class="text-lg">Incidencias por comunidad</p>
-          </div>
+          <IncidenciasComunidadesList
+            v-if="selectedComunidad === null"
+            @view="onViewComunidad"
+            @back="selectedComunidad = null"
+          />
+          <IncidenciasDetalleComunidad
+            v-else
+            :comunidad-id="selectedComunidad.id"
+            :comunidad="selectedComunidad"
+            @back="selectedComunidad = null"
+          />
         </div>
 
         <!-- Tab Content: Propietarios -->
@@ -64,12 +67,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import type { ComunidadIncidenciaCount } from '../types';
+import IncidenciasComunidadesList from '../components/IncidenciasComunidadesList.vue';
+import IncidenciasDetalleComunidad from '../components/IncidenciasDetalleComunidad.vue';
 
-const router = useRouter();
 const activeTab = ref<'dashboard' | 'comunidades' | 'propietarios'>('dashboard');
+const selectedComunidad = ref<ComunidadIncidenciaCount | null>(null);
 
-const goBack = () => {
-  router.push('/');
+const onViewComunidad = (comunidad: ComunidadIncidenciaCount) => {
+  selectedComunidad.value = comunidad;
 };
 </script>

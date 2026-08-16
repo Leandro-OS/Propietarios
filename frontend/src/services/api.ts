@@ -1,4 +1,4 @@
-import type { Comunidad, Propietario, ComunidadHistorico, PropietarioHistorico, PaginationInfo } from '../types';
+import type { Comunidad, Propietario, ComunidadHistorico, PropietarioHistorico, PaginationInfo, ComunidadIncidenciaCount, IncidenciaComunidadTitulo, PropietarioIncidenciaCount, IncidenciaPropietarioTitulo } from '../types';
 
 const API_BASE = '/api';
 
@@ -133,4 +133,107 @@ export const checkPropietarioAvailability = async (data: {
     body: JSON.stringify(data)
   });
   return res.json() as Promise<{ errors: string[] }>;
+};
+
+// ==================== INCIDENCIAS DE COMUNIDAD ====================
+
+export const getComunidadesConIncidencias = async (page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/incidencias/comunidades?page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ comunidades: ComunidadIncidenciaCount[]; pagination: PaginationInfo }>;
+};
+
+export const getIncidenciasByComunidad = async (comunidadId: number) => {
+  const res = await fetch(`${API_BASE}/incidencias/comunidades/${comunidadId}/incidencias`);
+  return res.json() as Promise<{ comunidad: any; incidencias: IncidenciaComunidadTitulo[] }>;
+};
+
+export const createIncidenciaComunidad = async (data: {
+  idCom: number;
+  tipoIncidencia: string;
+  subtipoIncidencia: string | null;
+  descripcion: string;
+  estado: string;
+  descripcionEstado: string;
+}) => {
+  const res = await fetch(`${API_BASE}/incidencias/comunidades`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json() as Promise<IncidenciaComunidadTitulo>;
+};
+
+export const updateIncidenciaComunidad = async (id: number, data: {
+  estado: string;
+  descripcionEstado: string;
+}) => {
+  const res = await fetch(`${API_BASE}/incidencias/comunidades/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw errorData;
+  }
+  return res.json() as Promise<IncidenciaComunidadTitulo>;
+};
+
+export const deleteIncidenciaComunidad = async (id: number) => {
+  const res = await fetch(`${API_BASE}/incidencias/comunidades/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return res.json();
+};
+
+// ==================== INCIDENCIAS DE PROPIETARIO ====================
+
+export const getPropietariosConIncidencias = async (page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/incidencias/propietarios?page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ propietarios: PropietarioIncidenciaCount[]; pagination: PaginationInfo }>;
+};
+
+export const getIncidenciasByPropietario = async (propietarioId: number) => {
+  const res = await fetch(`${API_BASE}/incidencias/propietarios/${propietarioId}/incidencias`);
+  return res.json() as Promise<{ propietario: any; incidencias: IncidenciaPropietarioTitulo[] }>;
+};
+
+export const createIncidenciaPropietario = async (data: {
+  idPro: number;
+  tipoIncidencia: string;
+  subtipoIncidencia: string | null;
+  descripcion: string;
+  estado: string;
+  descripcionEstado: string | null;
+}) => {
+  const res = await fetch(`${API_BASE}/incidencias/propietarios`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json() as Promise<IncidenciaPropietarioTitulo>;
+};
+
+export const updateIncidenciaPropietario = async (id: number, data: {
+  tipoIncidencia: string;
+  subtipoIncidencia: string | null;
+  descripcion: string;
+  estado: string;
+  descripcionEstado: string | null;
+}) => {
+  const res = await fetch(`${API_BASE}/incidencias/propietarios/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json() as Promise<IncidenciaPropietarioTitulo>;
+};
+
+export const deleteIncidenciaPropietario = async (id: number) => {
+  const res = await fetch(`${API_BASE}/incidencias/propietarios/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return res.json();
 };

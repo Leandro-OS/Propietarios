@@ -5,6 +5,7 @@ import comunidadesRoutes from './routes/comunidades.routes.js';
 import propietariosRoutes from './routes/propietarios.routes.js';
 import historicosRoutes from './routes/historicos.routes.js';
 import busquedaRoutes from './routes/busqueda.routes.js';
+import incidenciasRoutes from './routes/incidencias.routes.js';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use('/api/comunidades', comunidadesRoutes);
 app.use('/api/propietarios', propietariosRoutes);
 app.use('/api/historicos', historicosRoutes);
 app.use('/api/busqueda', busquedaRoutes);
+app.use('/api/incidencias', incidenciasRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });

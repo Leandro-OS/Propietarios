@@ -1,6 +1,18 @@
 🗺️ El Mapa Completo de tu Aplicación Full Stack
    Tu arquitectura final se vería estructurada de la siguiente manera:
 
+🔄 HERRAMIENTAS
+   ⚙️ Herramienta codigo : VSCODE
+   ⚙️ Servidor Local IA  : LM STUDIO (Instalar extensiones LM Studio y Cline)
+   ⚙️ Agente             : HERMES-AGENT
+   ⚙️ Pasarela local IA  : OMNIROUTE --> para ejecutar server, desde powershell escribir "omniroute"
+                                     --> Para dashboard : http://localhost:20128/dashboard
+									 --> Proveedor      : http://localhost:20128/v1
+									 --> API KEY        : sk-4878a71a3f27d0e0-7f4d97-43e8d466
+									 --> Modelo 1       : oc/deepseek-v4-flash-free
+									 --> Modelo 2       : oc/qwen3.6-plus
+									 --> https://www.youtube.com/watch?v=v04N4oyjWG4 / https://youtu.be/n0Tm_BxYKng
+
 🎨 FRONTEND (La pantalla del usuario)
    ⚙️ Motor    : Vite (Para compilar y ver tus cambios en milisegundos)
    ⚙️ Framework: Vue.js (Estructura visual por componentes)
@@ -19,7 +31,10 @@
   
   REQUISITOS :
      ⚙️ Instalar Node.js
-	 
+
+🚀 APP DESCKTOP
+  ⚙️ Empaquetador : Tauri (Framework que permite empaquetar aplicaciones web 
+                           para convertirlas en aplicaciones de escritorio nativas)	 
 	 
 +---------------------------------------------------------------------+
 |                                                                     |
