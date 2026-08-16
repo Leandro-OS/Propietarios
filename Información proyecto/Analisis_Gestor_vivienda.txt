@@ -270,4 +270,551 @@ La aplicación debe permitir:
 		   con un formato de lista similar al usado en la VISUALIZACIÓN.	  		 
 		 - Los registros de la lista estarán habilitados y accesibles. Al hacer click se debe abrir una ventana igual a la de "VISUALIZAR PROPIETARIOS"	para poder
 		   ver la información
+
   
+Nueva Funcionalidad. Gestion de Incidencias
+-------------------------------------------	  
+A.- Modificación en base de datos.
+    1.- Creación de las nuevas tablas "incidenciaComunidadTitulo" e "incidenciaPropietarioTitulo"  
+	    las cuales almacenarán la información de posibles problemas tanto a nivel de comunidad como de propietarios y estado actual.
+      1.1) Definición de la TABLA "incidenciaComunidadTitulo" (campo tabla/descripción / tipo)	  
+	       - idIncCom                
+		     -- Identificador de la indidencia
+			 -- Clave primária
+			 -- tipo numérico
+			 -- NOT NULL
+	       - idCom             
+		     -- identificador de la comunidad de propietarios asociado a la incidencia
+			 -- Clave foránea con la tabla "comunidad" (el mismo valor que "id" de la tabla "comunidad")
+			 -- tipo numerico
+			 -- NOT NULL
+		   - tipoIncidencia    
+		     -- Tipos de incidencias de la comunidad                                   
+			 -- tipo alfanumérico
+		     -- Los valores posibles de "tipoIncidencia" son : 
+			    --- "Mantenimiento" 
+				--- "Desperfecto" 
+				--- "Catastrofe" 
+		   - subtipoIncidencia 
+		     -- subtipos de incidencias de la comunidad                                
+		     -- tipo alfanumérico
+		     -- Los valores posibles de "subtipoIncidencia" son : 
+		        --- Para "Mantenimiento" : a) "Eléctrico"
+				                           b) "Fontaneria" 
+										   c) "Desagüe" 
+										   d) "Ventilación"
+				                           e) "Ext. Incendio"
+										   f) "Det. Incendio"
+										   g) "Basuras"
+										   h) "Teleco"
+										   i) "Ascensores"
+  			    --- Para "Desperfecto"   : a) "Funcionales"
+				                           b) "Esteticos" 
+										   c) "Seguridad"
+			    --- Para "Catastrofe"    : a) "Meteorologica"
+				                           b) "Externa" 
+										   c) "Interna" 
+		   - descripcion       
+		     -- Explicación/descripción                                                
+			 -- tipo alfanumérico de 200 caractéres máximo 
+			 -- NOT NULL
+		   - estado            
+		     -- Estado en el que está la incidencia 
+		     -- Los valores posibles de "estado" son : 
+			    a) "Registrada" 
+			    b) "Abierta" 
+			    c) "En proceso" 
+			    d) "En ejecución"
+			    e) "Bloqueada"
+			    f) "Resuelta" 
+				g) "Cerrada"
+			 --	La evolución de la incidencia solo puede seguir el siguiente camino :
+                 "Registrada" -> "Abierta" -> "En proceso" -|-> "En ejecución" |-> "Resuelta" -> "Cerrada"
+				                                            |                  |-> "Bloqueada" -> "Resuelta" -> "Cerrada" 
+				                                            |-> "Bloqueada" -> "En ejecución" -|-> "Resuelta" -> "Cerrada"  
+				   									                                           |-> "Bloqueada" -> "En ejecución" |-> "Resuelta" -> "Cerrada"
+																							                                     |-> "Bloqueada" -> "Resuelta" -> "Cerrada"
+		   - descripcionEstado 
+		     -- Explicación de la incidencia                                           
+		     -- tipo alfanumérico de 200 caractéres máximo
+			 -- NOT NULL
+	       - fechaCreación     
+		     -- fecha de creación del registro                                         
+		     -- tipo timestamp
+			 -- NOT NULL
+	       - fechaModificación 
+		     -- fecha de modificación del registro                                     
+		     -- tipo timestamp
+	       - fechaCierre       
+		     -- fecha de finalización de la incidencia                                 
+		     -- tipo timestamp
+
+	  
+      1.2) Definición de la TABLA "incidenciaPropietarioTitulo" (campo tabla/descripción / tipo)	  
+	       - idIncPro                
+		     -- Identificador de la indidencia     
+			 -- Clave primária
+			 -- tipo numérico
+			 -- NOT NULL
+	       - idPro             
+		     -- identificador del propietario asociado a la incidencia                 
+			 -- Clave foránea con la tabla "propietarios" (el mismo valor que "id" de la tabla "propietarios")			 
+			 -- tipo numerico
+			 -- NOT NULL
+		   - tipoIncidencia    
+		     -- Tipos de incidencias de la comunidad                                   -- tipo alfanumérico
+		     -- Los valores posibles de "tipoIncidencia" son : 
+			    --- "Mantenimiento" 
+				--- "Desperfecto" 
+			    --- "Catastrofe" 
+				--- "Convivencia"
+		   - subtipoIncidencia -- subtipos de incidencias de la comunidad                                -- tipo alfanumérico
+		     -- Los valores posibles de "subtipoIncidencia" son : 
+		        --- Para "Mantenimiento" : 
+				    a) "Eléctrico", 
+					b) "Fontaneria", 
+					c) "Desagüe", 
+					d) "Ventilación", 
+				    e) "Basuras", 
+					f) "Teleco",
+  			    --- Para "Desperfecto"   : 
+				    a) "Funcionales" 
+					b) "Estéticos" 
+					c) "Seguridad"
+			    --- Para "Catastrofe"    : 
+				    a) "Meteorológica"
+					b) "Externa"
+					c) "Interna" 
+				--- Para "Convivencia"   : 
+				    a) "Ruido"
+					b) "Morosidad"
+					c) "Salubridad"
+					d) "Olores"
+					e) "Actos"
+		   - descripcion       
+		     -- Explicación/descripción                                                
+			 -- tipo alfanumérico de 200 caractéres máximo
+			 -- NOT NULL
+		   - estado             
+		     -- Estado en el que está la incidencia 
+		     -- Los valores posibles de "estado" son : 
+			    a) "Registrada"
+				b) "Abierta" 
+				c) "En proceso" 
+ 			    d) "En ejecución"
+			    e) "Bloqueada"
+				f) "Resuelta" 
+				g) "Cerrada"
+			 --	La evolución de la incidencia solo puede seguir el siguiente camino :
+                 "Registrada" -> "Abierta" -> "En proceso" -|-> "En ejecución" |-> "Resuelta" -> "Cerrada"
+				                                            |                  |-> "Bloqueada" -> "Resuelta" -> "Cerrada" 
+				                                            |-> "Bloqueada" -> "En ejecución" -|-> "Resuelta" -> "Cerrada"  
+				   									                                           |-> "Bloqueada" -> "En ejecución" |-> "Resuelta" -> "Cerrada"
+																							                                     |-> "Bloqueada" -> "Resuelta" -> "Cerrada"			
+		   - descripcionEstado 
+		     -- Explicación de la incidencia                                           
+			 -- tipo alfanumérico de 200 caractéres máximo
+	       - fechaCreación     
+		     -- fecha de creación del registro                                         
+			 -- tipo timestamp
+			 -- NOT NULL
+	       - fechaModificación 
+		     -- fecha de modificación del registro                                     
+			 -- tipo timestamp
+	       - fechaCierre       
+		     -- fecha de finalización de la incidencia                                 
+			 -- tipo timestamp	
+			 
+    2.- Creación de las nuevas tablas "incidenciaComunidadRegistros" e "incidenciaPropietarioRegistro"  
+	    las cuales almacenarán la información de posibles problemas tanto a nivel de comunidad como de propietarios a modo de registros históricos.
+      2.1) Definición de la TABLA "incidenciaComunidadRegistros" (campo tabla/descripción / tipo)	  
+	       - idIncComReg             
+		     -- identificador del registro de la incidencia de la comunidad
+			 -- Clave primária			 
+			 -- tipo numerico
+			 -- NOT NULL	  
+	       - idIncCom                
+		     -- Identificador de la incidencia comunidad
+			 -- Clave foránea con la tabla "incidenciaComunidad" (el mismo valor que "idIncCom" de la tabla "incidenciaComunidad")
+			 -- tipo numérico
+			 -- NOT NULL
+		   - tipoIncidencia    
+		     -- Tipos de incidencias de la comunidad                                   
+			 -- tipo alfanumérico
+		     -- Los valores posibles de "tipoIncidencia" son : 
+			    --- "Mantenimiento" 
+				--- "Desperfecto" 
+				--- "Catastrofe" 
+		   - subtipoIncidencia 
+		     -- subtipos de incidencias de la comunidad                                
+		     -- tipo alfanumérico
+		     -- Los valores posibles de "subtipoIncidencia" son : 
+		        --- Para "Mantenimiento" : a) "Eléctrico"
+				                           b) "Fontaneria" 
+										   c) "Desagüe" 
+										   d) "Ventilación"
+				                           e) "Ext. Incendio"
+										   f) "Det. Incendio"
+										   g) "Basuras"
+										   h) "Teleco"
+										   i) "Ascensores"
+  			    --- Para "Desperfecto"   : a) "Funcionales"
+				                           b) "Esteticos" 
+										   c) "Seguridad"
+			    --- Para "Catastrofe"    : a) "Meteorologica"
+				                           b) "Externa" 
+										   c) "Interna" 
+		   - descripcion       
+		     -- Explicación/descripción                                                
+			 -- tipo alfanumérico de 200 caractéres máximo 
+			 -- NOT NULL
+		   - estado            
+		     -- Estado en el que está la incidencia 
+		     -- Los valores posibles de "estado" son : 
+			    a) "Registrada" 
+			    b) "Abierta" 
+			    c) "En proceso" 
+			    d) "En ejecución"
+			    e) "Bloqueada"
+			    f) "Resuelta" 
+				g) "Cerrada"
+		   - descripcionEstado 
+		     -- Explicación de la incidencia                                           
+		     -- tipo alfanumérico de 200 caractéres máximo
+			 -- NOT NULL
+	       - fechaCreación     
+		     -- fecha de creación del registro                                         
+		     -- tipo timestamp
+			 -- NOT NULL
+
+	  
+      2.2) Definición de la TABLA "incidenciaPropietarioRegistros" (campo tabla/descripción / tipo)	  
+	       - idIncProReg                
+		     -- identificador del registro de la incidencia del propietario     
+			 -- Clave primária
+			 -- tipo numérico
+			 -- NOT NULL
+	       - idIncPro             
+		     -- Identificador de la incidencia propiedad             
+			 -- Clave foránea con la tabla "incidenciaPropiedad" (el mismo valor que "idIncPro" de la tabla "incidenciaPropiedad")			 
+			 -- tipo numerico
+			 -- NOT NULL
+		   - tipoIncidencia    
+		     -- Tipos de incidencias de la comunidad                                   
+			 -- tipo alfanumérico
+		     -- Los valores posibles de "tipoIncidencia" son : 
+			    --- "Mantenimiento" 
+				--- "Desperfecto" 
+			    --- "Catastrofe" 
+				--- "Convivencia"
+		   - subtipoIncidencia -- subtipos de incidencias de la comunidad                                
+		     -- Los valores posibles de "subtipoIncidencia" son : 
+		        --- Para "Mantenimiento" : 
+				    a) "Eléctrico", 
+					b) "Fontaneria", 
+					c) "Desagüe", 
+					d) "Ventilación", 
+				    e) "Basuras", 
+					f) "Teleco",
+  			    --- Para "Desperfecto"   : 
+				    a) "Funcionales" 
+					b) "Esteticos" 
+					c) "Seguridad"
+			    --- Para "Catastrofe"    : 
+				    a) "Meteorologica"
+					b) "Externa"
+					c) "Interna" 
+				--- Para "Convivencia"   : 
+				    a) "Ruido"
+					b) "Morisidad"
+					c) "Salubridad"
+					d) "Olores"
+					e) "Actos"
+		   - descripcion       
+		     -- Explicación/descripción                                                
+			 -- tipo alfanumérico de 200 caractéres máximo
+			 -- NOT NULL
+		   - estado             
+		     -- Estado en el que está la incidencia 
+		     -- Los valores posibles de "estado" son : 
+			    a) "Registrada"
+				b) "Abierta" 
+				c) "En proceso" 
+ 			    d) "En ejecución"
+			    e) "Bloqueada"
+				f) "Resuelta" 
+				g) "Cerrada"				
+		   - descripcionEstado 
+		     -- Explicación de la incidencia                                           
+			 -- tipo alfanumérico de 200 caractéres máximo
+	       - fechaCreación     
+		     -- fecha de creación del registro                                         
+			 -- tipo timestamp
+			 -- NOT NULL
+
+Sí, empezamos con la parte B:
+
+B.- Creación de las incidencias.
+    1.- Menu pricipal 
+	  1.1) Creación de un nuevo botón en el menu principal (primera pantalla) con el título "GESTIÓN INCIDENCIAS" justo debajo del botón "GESTIÓN COM. PROP.".
+	       Al pulsar el botón, se abrirá una nueva ventana con el título "GESTIÓN DE INCIDENCIAS"
+	  1.2) La ventana de "GESTIÓN DE INCIDENCIAS" estará compuesta por tres pestañas seleccionables
+	       - La primera pestaña tendrá el título "DASHBOARD"
+		   - La segunda pestaña tendrá el título "COMUNIDADES"
+		   - La segunda pestaña tendrá el título "PROPIETARIOS"
+	2.- Pestaña "DASHBOARD"  
+	  2.1.- Panel de Control y Filtros Dinámicos.
+	        Para que el Dashboard se mantenga limpio pero siga siendo ultra informativo, se utilizarán filtros interactivos (Slicers) en un lateral
+			- Filtro por Comunidad: Permite aislar los datos de un edificio específico o ver el consolidado de todos.
+            - Filtro por Propiedad: Permite aislar los datos de un edificio específico o ver el consolidado de todos.			
+			- Filtro Temporal: Un selector de fechas (Mes actual, Último trimestre, Año) para ver si las incidencias van a la baja.
+			- Filtro por Gravedad Implícita: Un botón para filtrar rápidamente y ver solo las de tipo Catástrofe.
+	  2.2.- Resumen Ejecutivo. Esta sección debe ir en la parte superior de la pantalla. Son datos de un solo vistazo que no requieren gráficos complejos.
+	        La información será obtenida de las tablas "incidenciaComunidadReg" e "incidenciaPropiedadReg"
+	        - Tarjetas de Valor (KPIs numéricos):
+			  -- Total de Incidencias Activas: Suma de las incidencias en estado "Registrada", "Abierta", "En proceso" y "En ejecución".
+			     --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"
+			  -- Total de Incidencias Bloqueadas: Suma de las incidencias en estado "Bloqueada".
+			     --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"
+			  -- Total de Incidencias Cerradas: Suma de las incidencias en estado "Cerrada".
+                 --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"			  
+			  -- Incidencias Críticas: Cantidad total del tipo Catástrofe.
+                 --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"			  
+			  -- Tiempo Medio de Resolución: Días promedio que se tarda en pasar una incidencia de Registrada a Resuelta.
+			     --- Información obtenida de las tablas "incidenciaComunidadRegistro" e "incidenciaPropiedadRegistro". 
+				     Para una una misma incidencia (varios registros con el mismo identificador de incidencia de comunidad o de propietario
+					 calcular la diferencia de días entre la fecha de creación del registro con estado "Registrada" y la fecha de creación del registro
+					 con estado "Resuelta" 
+			  -- Tasa de Bloqueo: Porcentaje de incidencias que están actualmente Bloqueadas sobre el total.
+			     --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"			  
+	  2.3.- Análisis de Tipos y Subtipos.
+	        Uso de gráficos que agrupen o que muestren solo lo más urgente.
+			- Gráfico de Rosca o Pastel (Distribución por Tipo):
+			  -- Muestra el porcentaje del volumen total según los 4 tipos principales de comunidad  (Mantenimiento, Desperfecto, Catástrofe). 
+			  -- Muestra el porcentaje del volumen total según los 4 tipos principales de propietario(Mantenimiento, Desperfecto, Catástrofe, Convivencia). 
+			     --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"
+			- Gráfico de Barras Horizontales "Top 5 Subtipos" (El Principio de Pareto):
+			  -- muestra un gráfico de barras horizontales ordenadas de mayor a menor con los 5 subtipos con más incidencias de comunidad
+			  -- muestra un gráfico de barras horizontales ordenadas de mayor a menor con los 5 subtipos con más incidencias de propietario
+			     --- Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"			  
+      2.4.- Estado de la Gestión				 
+	        Esta sección ayuda al administrador de la comunidad a ver dónde se atascan las soluciones.
+			Información obtenida de las tablas "incidenciaComunidadTitulo" e "incidenciaPropiedadTitulo"
+			- Gráfico de Barras Apiladas (Estado por Tipo) :
+			  -- Caso comunidad. Un gráfico donde cada barra vertical representa uno de los 3 tipos principales (Mantenimiento, Desperfecto, Catástrofe), 
+			     y la barra está dividida en colores según su Estado. Para no saturar con los 7 estados, puedes agruparlos visualmente en 3 bloques de color dentro de la barra:
+				 --- Pendiente (Registrada + Abierta).
+				 --- En Curso (En proceso + En ejecución).
+				 --- Finalizado (Resuelta + Cerrada).
+			  -- Caso propietario. Un gráfico donde cada barra vertical representa uno de los 3 tipos principales (Mantenimiento, Desperfecto, Catástrofe, Convivencia), 
+			     y la barra está dividida en colores según su Estado. Para no saturar con los 7 estados, puedes agruparlos visualmente en 3 bloques de color dentro de la barra:
+				 --- Pendiente (Registrada + Abierta).
+				 --- En Curso (En proceso + En ejecución).
+				 --- Finalizado (Resuelta + Cerrada).				 
+			- Indicador de Alerta (Embudo o Lista de Bloqueadas):
+			  -- Caso comunidad. Una lista simple o gráfico de barras cortas que muestre solo las incidencias en estado Bloqueada, detallando el subtipo (ej. Teleco - Bloqueada). 
+			  -- Caso propietario. Una lista simple o gráfico de barras cortas que muestre solo las incidencias en estado Bloqueada, detallando el subtipo (ej. Teleco - Bloqueada).    
+	
+	3.- Pestaña "COMUNIDADES" 
+	  3.1) La pestaña mostrará un listado con todas las comunidades existentes en las tabla "comunidad" y el número de incidencias abiertas (suma de todos los 
+	       registros que no tengan el estado igual a "Cerrada") y cerradas registradas (Suma de todos los registros que tengan el estado igual a "Cerrada")
+	       en la tabla "incidenciaComunidadTitulo" 
+	  3.2) La lista estará compuesta por los campos siguientes :
+	       - Comunidad
+		     -- Contendrá la unión de los valores de los campos "direccion"  + " " + "numero" de la tabla "comunidad"
+		   - Población
+		     -- Contendrá el valor del campo "Poblacion" de la tabla "comunidad"
+		   - Activas
+		     -- Contendrá el número total de registros que no contienen el valor "Bloqueada" o "Cerrada" en el campo "estado" de la tabla "incidenciaComunidadTitulo"
+		   - Bloqueadas
+		     -- Contendrá el número total de registros que contiene el valor "Bloqueada" en el campo "estado" de la tabla "incidenciaComunidadTitulo"
+		   - Cerradas
+		     -- Contendrá el número total de registros que contiene el valor "Cerrada" en el campo "estado" de la tabla "incidenciaComunidadTitulo"
+		   - Creación
+		     -- Mostrará un icono clickable con forma de cruz, que al pulsar abrirá una nueva ventana con el título "Creación Incidencia Comunidad" para introducir
+			    los datos necesarios de la incidencia
+	  3.3) La lista	estará ordenada por "Comunidad" en orden alfabético ascendente
+	  3.4) El listado será gestionado del mismo modo que el resto de listados del proyecto, con paginación, mostrando 10 líneas por página y con un boton de "ATRÁS"
+	  3.5) Los registros del listado serán seleccionables, al clickar en un registro se abrirá una nueva ventana con el listado de incidencias por comunidades.
+	  3.6) La nueva ventana "Creación Incidencia Comunidad" contendrá los siguientes campos a completar:
+		   - Tipo Incidencia    
+		     -- Será un desplegable con los siguientes valores : 
+			    --- "Mantenimiento" 
+				--- "Desperfecto" 
+				--- "Catastrofe" 
+		   - Subtipo Incidencia 
+		     -- Será un desplegable con los siguientes valores : 
+		        --- Si "Tipo Incidencia" tiene el valor "Mantenimiento" : 
+				    a) "Eléctrico"
+				    b) "Fontaneria" 
+					c) "Desagüe" 
+					d) "Ventilación"
+				    e) "Ext. Incendio"
+					f) "Det. Incendio"
+					g) "Basuras"
+					h) "Teleco"
+					i) "Ascensores"
+  			    --- Si "Tipo Incidencia" tiene el valor "Desperfecto"   : 
+				    a) "Funcionales"
+				    b) "Esteticos" 
+					c) "Seguridad"
+			    --- Si "Tipo Incidencia" tiene el valor "Catastrofe"    : 
+				    a) "Meteorologica"
+				    b) "Externa" 
+					c) "Interna" 
+		   - Descripcion       
+		     -- Texto libre para indicar una descripción                                                
+			 -- Tipo alfanumérico de 200 caractéres máximo 
+		   - Estado            
+		     -- Estado en el que está la incidencia. Será un desplegable con los siguientes valores 
+			    a) "Registrada" 
+			    b) "Abierta" 
+			    c) "En proceso" 
+			    d) "En ejecución"
+			    e) "Bloqueada"
+			    f) "Resuelta" 
+				g) "Cerrada"
+			 --	La evolución de la incidencia solo puede seguir el siguiente camino :
+                 "Registrada" -> "Abierta" -> "En proceso" -|-> "En ejecución" |-> "Resuelta" -> "Cerrada"
+				                                            |                  |-> "Bloqueada" -> "Resuelta" -> "Cerrada" 
+				                                            |-> "Bloqueada" -> "En ejecución" -|-> "Resuelta" -> "Cerrada"  
+				   									                                           |-> "Bloqueada" -> "En ejecución" |-> "Resuelta" -> "Cerrada"
+																							                                     |-> "Bloqueada" -> "Resuelta" -> "Cerrada"
+		   - Descripcion Estado 
+		     -- Texto libre para indicar una descripción                                                
+			 -- Tipo alfanumérico de 200 caractéres máximo 
+           - Bóton de "CREAR"
+		     -- Si el botón "CREAR" es pulsado, se moverá la siguiente información a la tabla "incidenciaComunidadTitulo"
+	            a) Asignación de un nuevo indice al campo "idIncCom" de la tabla "incidenciaComunidadTitulo"       
+  	            b) Del campo "id" de la tabla "comunidad" al campo "idCom" de la tabla "incidenciaComunidadTitulo"
+		        c) Del campo "Tipo Incidencia"    de la tabla ventana "Creación Incidencia Comunidad" al campo "tipoIncidencia"     de la tabla "incidenciaComunidadTitulo"
+		        d) Del campo "Subtipo Incidencia" de la tabla ventana "Creación Incidencia Comunidad" al campo "subtipoIncidencia"  de la tabla "incidenciaComunidadTitulo"
+		        e) Del campo "Descripcion"        de la tabla ventana "Creación Incidencia Comunidad" al campo "descripcion"        de la tabla "incidenciaComunidadTitulo"
+		        f) Del campo "Estado"             de la tabla ventana "Creación Incidencia Comunidad" al campo "estado"             de la tabla "incidenciaComunidadTitulo"
+		        g) Del campo "Descripcion Estado" de la tabla ventana "Creación Incidencia Comunidad" al campo "descripcionEstado"  de la tabla "incidenciaComunidadTitulo"
+	            h) Timestamp de la hora de creación al campo "fechaCreación" de la tabla "incidenciaComunidadTitulo"
+	            i) nulo al campo "fechaModificación"  de la tabla "incidenciaComunidadTitulo"
+	            j) nulo al campo "fechaCierre"        de la tabla "incidenciaComunidadTitulo"
+		   - Bóton de "CANCELAR"
+		     -- Si el botón "CANCELAR" es pulsado, entonces regresaremos a la ventana anterior y situados en la pestaña de partida				
+      3.7) Cada vez que se cree y/o guarde la modificación de un registro de la tabla "incidenciaComunidadTitulo", automaticamente se 
+           creará un nuevo registro en la tabla "incidenciaComunidadReg" con la misma información presente del registro	a modo de 
+           histórico : 
+	       - copiar campo "idIncCom"          de "incidenciaComunidadTitulo" a campo "idIncCom          de "incidenciaComunidadReg"          
+		   - copiar campo "tipoIncidencia"    de "incidenciaComunidadTitulo" a campo "tipoIncidencia    de "incidenciaComunidadReg"          
+		   - copiar campo "subtipoIncidencia" de "incidenciaComunidadTitulo" a campo "subtipoIncidencia de "incidenciaComunidadReg"              
+		   - copiar campo "descripcion"       de "incidenciaComunidadTitulo" a campo "descripcion       de "incidenciaComunidadReg"          
+		   - copiar campo "estado"            de "incidenciaComunidadTitulo" a campo "estado            de "incidenciaComunidadReg"          
+		   - copiar campo "descripcionEstado" de "incidenciaComunidadTitulo" a campo "descripcionEstado de "incidenciaComunidadReg"          
+	       - copiar campo "fechaCreación"     de "incidenciaComunidadTitulo" a campo "fechaCreación     de "incidenciaComunidadReg" 
+		     si campo "estado" de "incidenciaComunidadTitulo" es igual a "Registrada"        
+	       - copiar campo fechaModificación de "incidenciaComunidadTitulo" a campo "fechaCreación  de "incidenciaComunidadReg" 
+             si campo "estado" de "incidenciaComunidadTitulo" es diferente a "Registrada"        		   
+		   - generar nuevo valor para idIncComReg de "incidenciaComunidadReg"
+      3.8) Si el campo "Estado" de la ventana "Creación Incidencia Comunidad" pasa de "Resuelta" a "Cerrada", el registro de la tabla quedará bloqueado y 
+	       no podrá ser modificado		   
+	4.- Pestaña "PROPIETARIOS"
+	  4.1) La pestaña mostrará un listado con todos los propietarios existentes en las tabla "propietario" y el número de incidencias abiertas y cerradas registradas
+	       en la tabla "incidenciaPropietarioTitulo"
+	  4.2) La lista estará compuesta por los campos siguientes :
+	       - Propietario
+		     -- Contendrá la unión de los valores de los campos "nombre"  + " " + "apellido1" + " " + "apellido2" de la tabla "propietario"
+		   - Población
+		     -- Contendrá el valor del campo "Poblacion" de la tabla "propietario"
+		   - Activas
+		     -- Contendrá el número total de registros que no contienen el valor "Bloqueada" o "Cerrada" en el campo "estado" de la tabla "incidenciaPropietarioTitulo"
+		   - Bloqueadas
+		     -- Contendrá el número total de registros que contiene el valor "Bloqueada" en el campo "estado" de la tabla "incidenciaPropietarioTitulo"
+		   - Cerradas
+		     -- Contendrá el número total de registros que contiene el valor "Cerrada" en el campo "estado" de la tabla "incidenciaPropietarioTitulo"
+		   - Creación
+		     -- Mostrará un icono clickable con forma de cruz, que al pulsar abrirá una nueva ventana con el título "Creación Incidencia propietario" para introducir
+			    los datos necesarios de la incidencia			 
+	  4.3) La lista	estará ordenada por "propietario" en orden alfabético ascendente
+	  4.4) El listado será gestionado del mismo modo que el resto de listados del proyecto, con paginación, mostrando 10 líneas por página y con un boton de "ATRÁS"
+	  4.5) Los registros del listado serán seleccionables, al clickar en un registro se abrirá una nueva ventana con el listado de incidencias por propietarios.
+	  4.6) La nueva ventana "Creación Incidencia Propietario" contendrá los siguientes campos a completar:       
+		   - Tipo Incidencia  
+		     -- Será un desplegable con los siguientes valores : 		   
+			    --- "Mantenimiento" 
+				--- "Desperfecto" 
+			    --- "Catastrofe" 
+				--- "Convivencia"
+		   - Subtipo Incidencia
+		     -- Será un desplegable con los siguientes valores : 		   
+		        --- Si "Tipo Incidencia" tiene el valor "Mantenimiento" : 
+				    a) "Eléctrico", 
+					b) "Fontaneria", 
+					c) "Desagüe", 
+					d) "Ventilación", 
+				    e) "Basuras", 
+					f) "Teleco",
+  			    --- Si "Tipo Incidencia" tiene el valor "Desperfecto"   : 
+				    a) "Funcionales" 
+					b) "Esteticos" 
+					c) "Seguridad"
+			    --- Si "Tipo Incidencia" tiene el valor  "Catastrofe"    : 
+				    a) "Meteorologica"
+					b) "Externa"
+					c) "Interna" 
+				--- Si "Tipo Incidencia" tiene el valor "Convivencia"   : 
+				    a) "Ruido"
+					b) "Morisidad"
+					c) "Salubridad"
+					d) "Olores"
+					e) "Actos"
+		   - Descripcion       
+		     -- Texto libre para indicar una descripción                                                
+			 -- Tipo alfanumérico de 200 caractéres máximo 
+		   - Estado             
+             --Estado en el que está la incidencia. Será un desplegable con los siguientes valores 
+			   a) "Registrada"
+			   b) "Abierta" 
+			   c) "En proceso" 
+ 			   d) "En ejecución"
+			   e) "Bloqueada"
+			   f) "Resuelta" 
+			   g) "Cerrada"
+			 --	La evolución de la incidencia solo puede seguir el siguiente camino :
+                 "Registrada" -> "Abierta" -> "En proceso" -|-> "En ejecución" |-> "Resuelta" -> "Cerrada"
+				                                            |                  |-> "Bloqueada" -> "Resuelta" -> "Cerrada" 
+				                                            |-> "Bloqueada" -> "En ejecución" -|-> "Resuelta" -> "Cerrada"  
+				   									                                           |-> "Bloqueada" -> "En ejecución" |-> "Resuelta" -> "Cerrada"
+																							                                     |-> "Bloqueada" -> "Resuelta" -> "Cerrada"			
+		   - Descripcion Estado 
+		     -- Texto libre para indicar una descripción                                                
+			 -- Tipo alfanumérico de 200 caractéres máximo 
+           - Bóton de "CREAR"
+		     -- Si el botón "CREAR" es pulsado, se moverá la siguiente información a la tabla "incidenciaPropietarioTitulo"
+	            a) Asignación de un nuevo indice al campo "idIncPro" de la tabla "incidenciaPropietarioTitulo"       
+  	            b) Del campo "id" de la tabla "propietario" al campo "idPro" de la tabla "incidenciaPropietarioTitulo"
+		        c) Del campo "Tipo Incidencia"    de la tabla ventana "Creación Incidencia propietario" al campo "tipoIncidencia"     de la tabla "incidenciaPropietarioTitulo"
+		        d) Del campo "Subtipo Incidencia" de la tabla ventana "Creación Incidencia propietario" al campo "subtipoIncidencia"  de la tabla "incidenciaPropietarioTitulo"
+		        e) Del campo "Descripcion"        de la tabla ventana "Creación Incidencia propietario" al campo "descripcion"        de la tabla "incidenciaPropietarioTitulo"
+		        f) Del campo "Estado"             de la tabla ventana "Creación Incidencia propietario" al campo "estado"             de la tabla "incidenciaPropietarioTitulo"
+		        g) Del campo "Descripcion Estado" de la tabla ventana "Creación Incidencia propietario" al campo "descripcionEstado"  de la tabla "incidenciaPropietarioTitulo"
+	            h) Timestamp de la hora de creación al campo "fechaCreación" de la tabla "incidenciapropietarioTitulo"
+	            i) nulo al campo "fechaModificación"  de la tabla "incidenciapropietarioTitulo"
+	            j) nulo al campo "fechaCierre"        de la tabla "incidenciapropietarioTitulo"
+		   - Bóton de "CANCELAR"
+		     -- Si el botón "CANCELAR" es pulsado, entonces regresaremos a la ventana anterior y situados en la pestaña de partida				
+      4.7) Cada vez que se cree y/o guarde la modificación de un registro de la tabla "incidenciaPropietarioTitulo", automaticamente se 
+           creará un nuevo registro en la tabla "incidenciaPropietarioReg" con la misma información presente del registro a modo de 
+           histórico : 
+	       - copiar campo "idIncPro"          de "incidenciaPropietarioTitulo" a campo "idIncPro          de "incidenciaPropietarioReg"          
+		   - copiar campo "tipoIncidencia"    de "incidenciaPropietarioTitulo" a campo "tipoIncidencia    de "incidenciaPropietarioReg"          
+		   - copiar campo "subtipoIncidencia" de "incidenciaPropietarioTitulo" a campo "subtipoIncidencia de "incidenciaPropietarioReg"              
+		   - copiar campo "descripcion"       de "incidenciaPropietarioTitulo" a campo "descripcion       de "incidenciaPropietarioReg"          
+		   - copiar campo "estado"            de "incidenciaPropietarioTitulo" a campo "estado            de "incidenciaPropietarioReg"          
+		   - copiar campo "descripcionEstado" de "incidenciaPropietarioTitulo" a campo "descripcionEstado de "incidenciaPropietarioReg"          
+	       - copiar campo "fechaCreación"     de "incidenciaPropietarioTitulo" a campo "fechaCreación     de "incidenciaPropietarioReg" 
+		     si campo "estado" de "incidenciaPropietarioTitulo" es igual a "Registrada"        
+	       - copiar campo fechaModificación de "incidenciaPropietarioTitulo" a campo "fechaCreación  de "incidenciaPropietarioReg" 
+             si campo "estado" de "incidenciaPropietarioTitulo" es diferente a "Registrada"        		   
+		   - generar nuevo valor para idIncProReg de "incidenciaPropietarioReg"	
+      4.8) Si el campo "Estado" de la ventana "Creación Incidencia Propietario" pasa de "Resuelta" a "Cerrada", el registro de la tabla quedará bloqueado y 
+	       no podrá ser modificado	  
+		   
+B.- Actulización de las incidencias.
+
+C.- Visualización de las incidencias.		   		   

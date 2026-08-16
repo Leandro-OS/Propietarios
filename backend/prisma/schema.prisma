@@ -139,6 +139,7 @@ model IncidenciaComunidadRegistros {
   estado              String
   descripcionEstado   String
   fechaCreacion       DateTime @default(now())
+  fechaModificacion   DateTime?
 }
 
 model IncidenciaPropietarioRegistros {
@@ -151,4 +152,5 @@ model IncidenciaPropietarioRegistros {
   estado              String
   descripcionEstado   String?
   fechaCreacion       DateTime @default(now())
+  fechaModificacion   DateTime?
 }

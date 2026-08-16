@@ -62,7 +62,7 @@
 import { ref, computed } from 'vue';
 import type { ComunidadIncidenciaCount } from '../types';
 import type { IncidenciaComunidadTitulo } from '../types';
-import { TIPOS_INCIDENCIA, SUBTIPOS_MANTENIMIENTO, SUBTIPOS_DESPERFECTO, SUBTIPOS_CATASTROFE, ESTADOS_INCIDENCIA } from '../types';
+import { TIPOS_INCIDENCIA, SUBTIPOS_MANTENIMIENTO, SUBTIPOS_DESPERFECTO, SUBTIPOS_CATASTROFE, SUBTIPOS_CONVIVENCIA, ESTADOS_INCIDENCIA } from '../types';
 
 const props = defineProps<{
   comunidades: ComunidadIncidenciaCount[];
@@ -82,7 +82,7 @@ const form = ref({
   subtipoIncidencia: props.isEvolution && props.initialData ? (props.initialData.subtipoIncidencia || '') : '',
   descripcion: props.isEvolution && props.initialData ? props.initialData.descripcion : '',
   estado: props.isEvolution && props.initialData ? props.initialData.estado : '',
-  descripcionEstado: props.isEvolution && props.initialData ? props.initialData.descripcionEstado : ''
+  descripcionEstado: ''
 });
 
 // Estados disponibles: si es evolucion, usa allowedStates; si no, solo 'Registrada'
@@ -98,6 +98,7 @@ const currentSubtipos = computed(() => {
     case 'Mantenimiento': return SUBTIPOS_MANTENIMIENTO;
     case 'Desperfecto': return SUBTIPOS_DESPERFECTO;
     case 'Catastrofe': return SUBTIPOS_CATASTROFE;
+    case 'Convivencia': return SUBTIPOS_CONVIVENCIA;
     default: return [];
   }
 });

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -74,7 +74,7 @@ export const getIncidenciasByComunidad = async (req: Request, res: Response) => 
 
     const incidencias = await prisma.incidenciaComunidadTitulo.findMany({
       where: { idCom: comunidadId },
-      orderBy: { fechaCreacion: 'desc' }
+      orderBy: { fechaCreacion: 'asc' }
     });
 
     res.json({
@@ -314,7 +314,7 @@ export const getIncidenciasByPropietario = async (req: Request, res: Response) =
 
     const incidencias = await prisma.incidenciaPropietarioTitulo.findMany({
       where: { idPro: propietarioId },
-      orderBy: { fechaCreacion: 'desc' }
+      orderBy: { fechaCreacion: 'asc' }
     });
 
     res.json({
@@ -387,21 +387,18 @@ export const updateIncidenciaPropietario = async (req: Request, res: Response) =
       return res.status(404).json({ error: 'Incidencia no encontrada' });
     }
 
+
+    if (estado === 'Registrada' || !estado) {
+      return res.status(400).json({ error: 'No se puede volver al estado Registrada' });
+    }
+
     if (incidencia.estado === 'Cerrada') {
-      return res.status(403).json({ error: 'La incidencia cerrada no puede ser modificada' });
+      return res.status(403).json({ error: 'No se puede modificar una incidencia cerrada' });
     }
 
-    let fechaRegistro: Date;
-    if (estado === 'Registrada') {
-      fechaRegistro = incidencia.fechaCreacion;
-    } else {
-      fechaRegistro = new Date();
-    }
-
+    // Solo actualizar estado, descripcionEstado y fechaModificacion
+    // (tipoIncidencia, subtipoIncidencia, descripcion se preservan del registro existente)
     const updateData: any = {
-      tipoIncidencia,
-      subtipoIncidencia,
-      descripcion,
       estado,
       descripcionEstado,
       fechaModificacion: new Date()
@@ -416,15 +413,20 @@ export const updateIncidenciaPropietario = async (req: Request, res: Response) =
       data: updateData
     });
 
+    // Copiar todo el contenido de titulo a registros
+    const fechaParaRegistro = estado === 'Registrada'
+      ? updated.fechaCreacion
+      : updated.fechaModificacion;
+
     await prisma.incidenciaPropietarioRegistros.create({
       data: {
         idIncPro: updated.idIncidencia,
-        tipoIncidencia,
-        subtipoIncidencia,
-        descripcion,
-        estado,
-        descripcionEstado,
-        fechaCreacion: fechaRegistro
+        tipoIncidencia: updated.tipoIncidencia,
+        subtipoIncidencia: updated.subtipoIncidencia,
+        descripcion: updated.descripcion,
+        estado: updated.estado,
+        descripcionEstado: updated.descripcionEstado,
+        fechaCreacion: fechaParaRegistro!
       }
     });
 
@@ -457,5 +459,93 @@ export const deleteIncidenciaPropietario = async (req: Request, res: Response) =
     res.json({ message: 'Incidencia eliminada correctamente' });
   } catch (error) {
     res.status(500).json({ error: 'Error al eliminar incidencia de propietario' });
+  }
+};
+
+// ==================== EVOLUCION (REGISTROS) DE COMUNIDAD ====================
+
+export const getEvolucionIncidenciaComunidad = async (req: Request, res: Response) => {
+  try {
+    const idIncidencia = parseInt(req.params.id as string);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+
+    const incidencia = await prisma.incidenciaComunidadTitulo.findUnique({
+      where: { idIncidencia }
+    });
+
+    if (!incidencia) {
+      return res.status(404).json({ error: 'Incidencia no encontrada' });
+    }
+
+    const [registros, total] = await Promise.all([
+      prisma.incidenciaComunidadRegistros.findMany({
+        where: { idIncCom: idIncidencia },
+        orderBy: { fechaCreacion: 'asc' },
+        skip: offset,
+        take: limit
+      }),
+      prisma.incidenciaComunidadRegistros.count({
+        where: { idIncCom: idIncidencia }
+      })
+    ]);
+
+    res.json({
+      incidencia,
+      registros,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener evolución de incidencia de comunidad' });
+  }
+};
+
+// ==================== EVOLUCION (REGISTROS) DE PROPIETARIO ====================
+
+export const getEvolucionIncidenciaPropietario = async (req: Request, res: Response) => {
+  try {
+    const idIncidencia = parseInt(req.params.id as string);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+
+    const incidencia = await prisma.incidenciaPropietarioTitulo.findUnique({
+      where: { idIncidencia }
+    });
+
+    if (!incidencia) {
+      return res.status(404).json({ error: 'Incidencia no encontrada' });
+    }
+
+    const [registros, total] = await Promise.all([
+      prisma.incidenciaPropietarioRegistros.findMany({
+        where: { idIncPro: idIncidencia },
+        orderBy: { fechaCreacion: 'asc' },
+        skip: offset,
+        take: limit
+      }),
+      prisma.incidenciaPropietarioRegistros.count({
+        where: { idIncPro: idIncidencia }
+      })
+    ]);
+
+    res.json({
+      incidencia,
+      registros,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener evolución de incidencia de propietario' });
   }
 };

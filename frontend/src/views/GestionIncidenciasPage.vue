@@ -56,9 +56,17 @@
 
         <!-- Tab Content: Propietarios -->
         <div v-if="activeTab === 'propietarios'" class="py-4">
-          <div class="text-center py-8 text-gray-500">
-            <p class="text-lg">Incidencias por propietario</p>
-          </div>
+          <IncidenciasPropietariosList
+            v-if="selectedPropietario === null"
+            @view="onViewPropietario"
+            @back="selectedPropietario = null"
+          />
+          <IncidenciasDetallePropietario
+            v-else
+            :propietario-id="selectedPropietario.id"
+            :propietario="selectedPropietario"
+            @back="selectedPropietario = null"
+          />
         </div>
       </div>
     </div>
@@ -67,14 +75,21 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { ComunidadIncidenciaCount } from '../types';
+import type { ComunidadIncidenciaCount, PropietarioIncidenciaCount } from '../types';
 import IncidenciasComunidadesList from '../components/IncidenciasComunidadesList.vue';
 import IncidenciasDetalleComunidad from '../components/IncidenciasDetalleComunidad.vue';
+import IncidenciasPropietariosList from '../components/IncidenciasPropietariosList.vue';
+import IncidenciasDetallePropietario from '../components/IncidenciasDetallePropietario.vue';
 
 const activeTab = ref<'dashboard' | 'comunidades' | 'propietarios'>('dashboard');
 const selectedComunidad = ref<ComunidadIncidenciaCount | null>(null);
+const selectedPropietario = ref<PropietarioIncidenciaCount | null>(null);
 
 const onViewComunidad = (comunidad: ComunidadIncidenciaCount) => {
   selectedComunidad.value = comunidad;
+};
+
+const onViewPropietario = (propietario: PropietarioIncidenciaCount) => {
+  selectedPropietario.value = propietario;
 };
 </script>

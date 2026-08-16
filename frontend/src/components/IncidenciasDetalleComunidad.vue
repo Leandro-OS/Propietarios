@@ -29,33 +29,37 @@
       <p class="text-blue-600 font-semibold">CARGANDO INCIDENCIAS...</p>
     </div>
     <!-- Listado Vacio -->
-    <div v-else-if="incidencias.length === 0 && !showCreateForm && !showEvolutionForm" class="text-center py-8">
+    <div v-else-if="incidencias.length === 0 && !showCreateForm && !showEvolutionForm && !showEvolutionList" class="text-center py-8">
       <p class="text-gray-500 text-lg">NO EXISTEN INCIDENCIAS PARA ESTA COMUNIDAD</p>
     </div>
     <!-- Tabla de Incidencias con paginacion -->
-    <div v-else-if="!showCreateForm && !showEvolutionForm" class="overflow-x-auto">
+    <div v-else-if="!showCreateForm && !showEvolutionForm && !showEvolutionList" class="overflow-x-auto">
       <table class="w-full border-collapse">
         <thead>
           <tr class="bg-gray-200">
             <th class="border p-3 text-left font-bold text-gray-700">TIPO</th>
             <th class="border p-3 text-left font-bold text-gray-700">SUBTIPO</th>
-            <th class="border p-3 text-left font-bold text-gray-700">DESCRIPCION</th>
             <th class="border p-3 text-left font-bold text-gray-700">ESTADO</th>
+            <th class="border p-3 text-left font-bold text-gray-700">DESCRIPCION</th>
             <th class="border p-3 text-left font-bold text-gray-700">FECHA CREACION</th>
-            <th class="border p-3 text-left font-bold text-gray-700">ACCIONES</th>
+            <th class="border p-3 text-left font-bold text-gray-700">FECHA MOD.</th>
+            <th class="border p-3 text-center font-bold text-gray-700">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="inc in paginatedIncidencias" :key="inc.idIncidencia" class="hover:bg-blue-50 cursor-pointer transition">
             <td class="border p-3">{{ inc.tipoIncidencia }}</td>
             <td class="border p-3">{{ inc.subtipoIncidencia || "-" }}</td>
-            <td class="border p-3">{{ inc.descripcion }}</td>
             <td class="border p-3"><span :class="getEstadoClass(inc.estado)">{{ inc.estado }}</span></td>
+            <td class="border p-3">{{ inc.descripcion }}</td>
             <td class="border p-3">{{ formatDate(inc.fechaCreacion) }}</td>
+            <td class="border p-3">{{ formatDate(inc.fechaModificacion) }}</td>
             <td class="border p-3 text-center">
-              <button @click="viewDetalle(inc)" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded text-sm transition">DETALLE</button>
+              <button @click="viewDetalle(inc)" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded text-sm transition mr-1">DETALLE</button>
+              <button @click="viewEvolucion(inc)" :disabled="inc.estado === 'Registrada'" :class="inc.estado === 'Registrada' ? 'bg-gray-300 text-gray-500 cursor-not-allowed font-semibold py-1 px-3 rounded text-sm' : 'bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-3 rounded text-sm transition'">EVO</button>
             </td>
           </tr>
+
         </tbody>
       </table>
       <!-- Paginacion -->
@@ -65,7 +69,43 @@
         <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">SIGUIENTE</button>
       </div>
     </div>
-    <!-- Modal Detalle -->
+    <!-- Vista Evolucion (Listado de registros) -->
+    <div v-else-if="showEvolutionList" class="overflow-x-auto">
+      <div class="bg-gray-100 rounded-lg p-4 mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Evolución de Incidencia #{{ evolutionIncidencia?.idIncidencia }}</h2>
+        <p class="text-sm text-gray-600 mt-1">{{ evolutionIncidencia?.tipoIncidencia }} - {{ evolutionIncidencia?.descripcion }}</p>
+      </div>
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-3 text-left font-bold text-gray-700">TIPO</th>
+            <th class="border p-3 text-left font-bold text-gray-700">SUBTIPO</th>
+            <th class="border p-3 text-left font-bold text-gray-700">ESTADO</th>
+            <th class="border p-3 text-left font-bold text-gray-700">DESCRIPCION</th>
+            <th class="border p-3 text-left font-bold text-gray-700">FECHA CREACION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="reg in evolutionRegistros" :key="reg.idIncComReg" class="hover:bg-blue-50 transition">
+            <td class="border p-3">{{ reg.tipoIncidencia }}</td>
+            <td class="border p-3">{{ reg.subtipoIncidencia || '-' }}</td>
+            <td class="border p-3"><span :class="getEstadoClass(reg.estado)">{{ reg.estado }}</span></td>
+            <td class="border p-3">{{ reg.descripcionEstado || '' }}</td>
+            <td class="border p-3">{{ formatDate(reg.fechaCreacion) }}</td>
+          </tr>
+          <tr v-if="evolutionRegistros.length === 0">
+            <td colspan="5" class="text-center py-4 text-gray-500">No hay registros de evolucion para esta incidencia</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Paginacion Evolucion -->
+      <div class="flex justify-between items-center mt-4">
+        <button @click="changeEvolPage(evolutionPage - 1)" :disabled="evolutionPage === 1" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">← ANTERIOR</button>
+        <span class="text-gray-700 font-medium">Página {{ evolutionPage }} de {{ totalEvolPages }}</span>
+        <button @click="changeEvolPage(evolutionPage + 1)" :disabled="evolutionPage === totalEvolPages" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">SIGUIENTE →</button>
+      </div>
+      <button @click="closeEvolution" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition mt-4">ATRÁS</button>
+    </div>
     <div v-if="showDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 max-w-lg w-full mx-4 shadow-xl">
         <h3 class="text-lg font-bold mb-4 text-blue-800">DETALLE DE INCIDENCIA</h3>
@@ -98,8 +138,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { getIncidenciasByComunidad } from '../services/api';
-import { createIncidenciaComunidad, updateIncidenciaComunidad } from '../services/api';
-import type { IncidenciaComunidadTitulo } from '../types';
+import { createIncidenciaComunidad, updateIncidenciaComunidad, getEvolucionIncidenciaComunidad } from '../services/api';
+import type { IncidenciaComunidadTitulo, IncidenciaComunidadRegistros } from '../types';
 import CreateIncidenciaForm from './CreateIncidenciaForm.vue';
 
 const props = defineProps<{ comunidadId: number; comunidad: { id: number; comunidad: string; poblacion: string } }>();
@@ -113,6 +153,14 @@ const showDetailModal = ref(false);
 const showErrorModal = ref(false);
 const errorMessage = ref('');
 const selectedIncidencia = ref<IncidenciaComunidadTitulo | null>(null);
+
+// Evolution list state
+const showEvolutionList = ref(false);
+const evolutionIncidencia = ref<IncidenciaComunidadTitulo | null>(null);
+const evolutionRegistros = ref<IncidenciaComunidadRegistros[]>([]);
+const evolutionPage = ref(1);
+const evolutionPageSize = 10;
+const totalEvolPages = ref(1);
 
 // Paginacion
 const currentPage = ref(1);
@@ -164,6 +212,40 @@ function getEstadoClass(estado: string): string {
     'Cerrada': 'bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-semibold'
   };
   return map[estado] || 'px-2 py-1 rounded text-xs';
+}
+
+// Evolution list functions
+function viewEvolucion(inc: IncidenciaComunidadTitulo) {
+  evolutionIncidencia.value = inc;
+  evolutionPage.value = 1;
+  loadEvolution(inc.idIncidencia);
+}
+
+async function loadEvolution(idIncidencia: number) {
+  try {
+    const data = await getEvolucionIncidenciaComunidad(idIncidencia, evolutionPage.value, evolutionPageSize);
+    evolutionRegistros.value = data.registros;
+    totalEvolPages.value = data.pagination.totalPages;
+    showEvolutionList.value = true;
+  } catch (e) {
+    console.error('Error cargando evolución:', e);
+  }
+}
+
+function closeEvolution() {
+  showEvolutionList.value = false;
+  evolutionIncidencia.value = null;
+  evolutionRegistros.value = [];
+  evolutionPage.value = 1;
+}
+
+function changeEvolPage(page: number) {
+  if (page >= 1 && page <= totalEvolPages.value) {
+    evolutionPage.value = page;
+    if (evolutionIncidencia.value) {
+      loadEvolution(evolutionIncidencia.value.idIncidencia);
+    }
+  }
 }
 
 // Actions

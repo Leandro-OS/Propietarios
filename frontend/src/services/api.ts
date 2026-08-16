@@ -1,4 +1,4 @@
-import type { Comunidad, Propietario, ComunidadHistorico, PropietarioHistorico, PaginationInfo, ComunidadIncidenciaCount, IncidenciaComunidadTitulo, PropietarioIncidenciaCount, IncidenciaPropietarioTitulo } from '../types';
+import type { Comunidad, Propietario, ComunidadHistorico, PropietarioHistorico, PaginationInfo, ComunidadIncidenciaCount, IncidenciaComunidadTitulo, PropietarioIncidenciaCount, IncidenciaPropietarioTitulo, IncidenciaComunidadRegistros, IncidenciaPropietarioRegistros } from '../types';
 
 const API_BASE = '/api';
 
@@ -187,6 +187,11 @@ export const deleteIncidenciaComunidad = async (id: number) => {
   return res.json();
 };
 
+export const getEvolucionIncidenciaComunidad = async (idIncidencia: number, page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/incidencias/comunidades/${idIncidencia}/evolucion?page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ incidencia: IncidenciaComunidadTitulo; registros: IncidenciaComunidadRegistros[]; pagination: PaginationInfo }>;
+};
+
 // ==================== INCIDENCIAS DE PROPIETARIO ====================
 
 export const getPropietariosConIncidencias = async (page: number = 1, limit: number = 10) => {
@@ -236,4 +241,9 @@ export const deleteIncidenciaPropietario = async (id: number) => {
     headers: { 'Content-Type': 'application/json' }
   });
   return res.json();
+};
+
+export const getEvolucionIncidenciaPropietario = async (idIncidencia: number, page: number = 1, limit: number = 10) => {
+  const res = await fetch(`${API_BASE}/incidencias/propietarios/${idIncidencia}/evolucion?page=${page}&limit=${limit}`);
+  return res.json() as Promise<{ incidencia: IncidenciaPropietarioTitulo; registros: IncidenciaPropietarioRegistros[]; pagination: PaginationInfo }>;
 };

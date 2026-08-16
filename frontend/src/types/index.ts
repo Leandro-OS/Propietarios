@@ -95,11 +95,12 @@ export interface PaginationInfo {
 
 // ==================== INCIDENCIAS ====================
 
-export const TIPOS_INCIDENCIA = ['Mantenimiento', 'Desperfecto', 'Catastrofe'] as const;
+export const TIPOS_INCIDENCIA = ['Mantenimiento', 'Desperfecto', 'Catastrofe', 'Convivencia'] as const;
 
-export const SUBTIPOS_MANTENIMIENTO = ['Electrico', 'Fontaneria', 'Desague', 'Ventilacion', 'Ext. Incendio', 'Det. Incendio', 'Basuras', 'Teleco', 'Ascensores'] as const;
+export const SUBTIPOS_MANTENIMIENTO = ['Electrico', 'Fontaneria', 'Desague', 'Ventilacion', 'Basuras', 'Teleco', 'Ascensores'] as const;
 export const SUBTIPOS_DESPERFECTO = ['Funcionales', 'Esteticos', 'Seguridad'] as const;
 export const SUBTIPOS_CATASTROFE = ['Meteorologica', 'Externa', 'Interna'] as const;
+export const SUBTIPOS_CONVIVENCIA = ['Ruido', 'Morisidad', 'Salubridad', 'Olores', 'Actos'] as const;
 
 export const ESTADOS_INCIDENCIA = ['Registrada', 'Abierta', 'En proceso', 'En ejecucion', 'Bloqueada', 'Resuelta', 'Cerrada'] as const;
 
@@ -125,6 +126,7 @@ export interface IncidenciaComunidadRegistros {
   estado: string;
   descripcionEstado: string;
   fechaCreacion: string;
+  fechaModificacion: string | null;
 }
 
 export interface ComunidadIncidenciaCount {
@@ -156,4 +158,16 @@ export interface PropietarioIncidenciaCount {
   activas: number;
   bloqueadas: number;
   cerradas: number;
+}
+
+export interface IncidenciaPropietarioRegistros {
+  idIncProReg: number;
+  idIncPro: number;
+  tipoIncidencia: string;
+  subtipoIncidencia: string | null;
+  descripcion: string;
+  estado: string;
+  descripcionEstado: string | null;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
 }
